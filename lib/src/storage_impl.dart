@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/widgets.dart';
 import 'storage/html.dart' if (dart.library.io) 'storage/io.dart';
 
 /// Instantiate GetStorage to access storage driver apis
@@ -32,6 +33,7 @@ class GetStorage {
 
   /// Start the storage drive. Importate: use await before calling this api, or side effects will happen.
   static Future<bool> init([String container = 'GetStorage']) {
+    WidgetsFlutterBinding.ensureInitialized();
     if (container == null) {
       throw 'key can not be null';
     }
@@ -78,7 +80,7 @@ class GetStorage {
   }
 
   /// clear all data on your container
-  Future<void> clear() async {
+  Future<void> erase() async {
     await _concrete.clear();
     return _tryFlush();
   }

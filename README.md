@@ -16,34 +16,40 @@ main() async {
   runApp(App());
 }
 ```
-use GetStorage as instance:
+use GetStorage through an instance or use directly 'GetStorage().read('key')'
 ```dart
-GetStorage getx = GetStorage();
+final box = GetStorage();
 ```
-And use it. To write information you must use `write` :
+To write information you must use `write` :
 ```dart
- getx.write('quote', 'GetX is the best');
+box.write('quote', 'GetX is the best');
 ```
 
 To read values you use `read`:
 ```dart
-print(getx.read('quote'));
+print(box.read('quote'));
 // out: GetX is the best
 
 ```
 To remove a key, you can use `remove`:
 
 ```dart
- getx.remove('quote');
+box.remove('quote');
 ```
 
 To listen changes you can use `listen`:
 ```dart
- getx.listen((event) {print(event);});
+box.listen((){
+  print('box changed');
+});
 ```
 If you subscribe to events, be sure to dispose them when using:
 ```dart
- getx.dispose();
+box.dispose();
+```
+To erase your container:
+```dart
+box.erase();
 ```
 
 If you want to create different containers, simply give it a name. You can listen to specific containers, and also delete them.
@@ -54,12 +60,18 @@ GetStorage g = GetStorage('MyStorage');
 
 To initialize specific container:
 ```dart
- await GetStorage.init('MyStorage');
- ```
- 
-**Get Storage is not fast, it is absurdly fast, so fast that you can write a file and then read it synchronously.**
+await GetStorage.init('MyStorage');
+```
+
+**GetStorage is not fast, it is absurdly fast, so fast that you can write a file and then read it immediately.**
+
+![](delete.png)
+![](write.png)
+![](read.png)
 
 ## What GetStorage is:
 Persistent key/value storage for Android, iOS, Web, Linux, Mac and Fuchsia (soon to be Windows) that combines persistent storage with fast memory access.
 ## What GetStorage is NOT:
-A database. Keep in mind that GetStorage was written in less than 200 lines of dart code to provide ultra-light, high-speed read/write storage to work synchronously. If you want to store data persistently, use it, if you want a database, with indexing there are incredible solutions that are already available, like Hive and Sqflite/Moor.
+A database. Get is super compact to offer you a solution ultra-light, high-speed read/write storage to work synchronously. If you want to store data persistently, use it, if you want a database, with indexing there are incredible solutions that are already available, like Hive and Sqflite/Moor.
+
+

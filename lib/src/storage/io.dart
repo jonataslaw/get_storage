@@ -2,32 +2,27 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-import '../storage_interface.dart';
 import '../value.dart';
 
-class StorageImpl implements StorageInterface {
+class StorageImpl {
   StorageImpl(this.fileName, [this.path]);
 
-  @override
   final String path, fileName;
 
   final Value<Map<String, dynamic>> subject =
       Value<Map<String, dynamic>>(<String, dynamic>{});
 
-  @override
   Future<void> clear() async {
     File _file = await _getFile();
     subject.value.clear();
     return _file.deleteSync();
   }
 
-  @override
   Future<bool> exists() async {
     File _file = await _getFile();
     return _file.existsSync();
   }
 
-  @override
   Future<void> flush() async {
     final serialized = json.encode(subject.value);
     File _file = await _getFile();
@@ -35,12 +30,10 @@ class StorageImpl implements StorageInterface {
     return;
   }
 
-  @override
   T read<T>(String key) {
     return subject.value[key] as T;
   }
 
-  @override
   Future<void> init([Map<String, dynamic> initialData]) async {
     subject.value = initialData ?? <String, dynamic>{};
     File _file = await _getFile();
@@ -51,7 +44,6 @@ class StorageImpl implements StorageInterface {
     }
   }
 
-  @override
   Future<void> remove(String key) async {
     subject
       ..value.remove(key)
@@ -59,7 +51,6 @@ class StorageImpl implements StorageInterface {
     await _writeFile(subject.value);
   }
 
-  @override
   Future<void> write(String key, dynamic value) async {
     subject
       ..value[key] = value

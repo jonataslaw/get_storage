@@ -1,3 +1,9 @@
+## [1.1.3] 
+- Fix unnecessary imports
+
+## [1.1.2] 
+- Added Benchmarks
+
 ## [1.1.1] 
 - Added Examples
 

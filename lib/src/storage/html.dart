@@ -1,41 +1,34 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:html' as html;
-import '../storage_interface.dart';
 import '../value.dart';
 
-class StorageImpl implements StorageInterface {
+class StorageImpl {
   StorageImpl(this.fileName, [this.path]);
   html.Storage get localStorage => html.window.localStorage;
 
-  @override
   final String path, fileName;
 
   Value<Map<String, dynamic>> subject =
       Value<Map<String, dynamic>>(<String, dynamic>{});
 
-  @override
   Future<void> clear() async {
     localStorage.remove(fileName);
     subject.value.clear();
   }
 
-  @override
   Future<bool> exists() async {
     return localStorage != null && localStorage.containsKey(fileName);
   }
 
-  @override
   Future<void> flush() {
     return _writeToStorage(subject.value);
   }
 
-  @override
   T read<T>(String key) {
     return subject.value[key] as T;
   }
 
-  @override
   Future<void> init([Map<String, dynamic> initialData]) async {
     subject.value = initialData ?? <String, dynamic>{};
     if (await exists()) {
@@ -46,7 +39,6 @@ class StorageImpl implements StorageInterface {
     return;
   }
 
-  @override
   Future<void> remove(String key) {
     subject
       ..value.remove(key)
@@ -54,7 +46,6 @@ class StorageImpl implements StorageInterface {
     return _writeToStorage(subject.value);
   }
 
-  @override
   Future<void> write(String key, dynamic value) {
     subject
       ..value[key] = value
