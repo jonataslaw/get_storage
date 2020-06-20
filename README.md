@@ -56,3 +56,10 @@ To initialize specific container:
 ```dart
  await GetStorage.init('MyStorage');
  ```
+ 
+**Get Storage is not fast, it is absurdly fast, so fast that you can write a file and then read it synchronously.**
+
+## What GetStorage is:
+Persistent key/value storage for Android, iOS, Web, Linux, Mac and Fuchsia (soon to be Windows) that combines persistent storage with fast memory access.
+## What GetStorage is NOT:
+A database. Keep in mind that GetStorage was written in less than 200 lines of dart code to provide ultra-light, high-speed read/write storage to work synchronously. If you want to store data persistently, use it, if you want a database, with indexing there are incredible solutions that are already available, like Hive and Sqflite/Moor.
