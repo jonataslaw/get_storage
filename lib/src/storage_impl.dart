@@ -43,7 +43,7 @@ class GetStorage {
   Future<void> _init() async {
     try {
       await _concrete.init(_initialData);
-    } on Error catch (err) {
+    } catch (err) {
       throw err;
     }
   }

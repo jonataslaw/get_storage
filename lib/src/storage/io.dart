@@ -18,10 +18,10 @@ class StorageImpl {
     return _file.deleteSync();
   }
 
-  Future<bool> exists() async {
-    File _file = await _getFile();
-    return _file.existsSync();
-  }
+  // Future<bool> _exists() async {
+  //   File _file = await _getFile();
+  //   return _file.existsSync();
+  // }
 
   Future<void> flush() async {
     final serialized = json.encode(subject.value);
@@ -65,14 +65,16 @@ class StorageImpl {
 
   Future<void> _readFile() async {
     File _file = await _getFile();
-    final content = await _file.readAsString();
-    subject.value = json?.decode(content) as Map<String, dynamic>;
+    final content = await _file.readAsString()
+      ..trim();
+    subject.value =
+        json?.decode(content == "" ? {} : content) as Map<String, dynamic>;
   }
 
   Future<File> _getFile() async {
     final dir = await _getDocumentDir();
     final _path = path ?? dir.path;
-    final _file = File('$_path/$fileName');
+    final _file = File('$_path/$fileName.gs');
     return _file;
   }
 

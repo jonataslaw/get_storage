@@ -17,7 +17,7 @@ class StorageImpl {
     subject.value.clear();
   }
 
-  Future<bool> exists() async {
+  Future<bool> _exists() async {
     return localStorage != null && localStorage.containsKey(fileName);
   }
 
@@ -31,7 +31,7 @@ class StorageImpl {
 
   Future<void> init([Map<String, dynamic> initialData]) async {
     subject.value = initialData ?? <String, dynamic>{};
-    if (await exists()) {
+    if (await _exists()) {
       await _readFromStorage();
     } else {
       await _writeToStorage(subject.value);

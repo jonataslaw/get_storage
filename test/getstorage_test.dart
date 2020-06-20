@@ -58,8 +58,8 @@ void main() async {
   });
 
   test('newContainer', () async {
-    final newContainer = GetStorage('newContainer');
     await GetStorage.init('newContainer');
+    final newContainer = GetStorage('newContainer');
 
     /// Attempting to start a Container that has already started must return the container already created.
     var container2 = await GetStorage.init();
