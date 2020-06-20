@@ -1,5 +1,5 @@
 # get_storage
-A fast, extra light and synchronous key-value storage to Get framework written entirely in Dart.
+A fast, extra light and synchronous key-value storage written entirely in Dart to Get framework of Flutter.
 
 Supports Android, iOS, Web, Mac, Linux, and fuchsia (Wip on Windows). 
 
@@ -56,5 +56,3 @@ To initialize specific container:
 ```dart
  await GetStorage.init('MyStorage');
  ```
-
-

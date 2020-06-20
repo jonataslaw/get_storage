@@ -1,0 +1,95 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import '../storage_interface.dart';
+import '../value.dart';
+
+class StorageImpl implements StorageInterface {
+  StorageImpl(this.fileName, [this.path]);
+
+  @override
+  final String path, fileName;
+
+  final Value<Map<String, dynamic>> subject =
+      Value<Map<String, dynamic>>(<String, dynamic>{});
+
+  @override
+  Future<void> clear() async {
+    File _file = await _getFile();
+    subject.value.clear();
+    return _file.deleteSync();
+  }
+
+  @override
+  Future<bool> exists() async {
+    File _file = await _getFile();
+    return _file.existsSync();
+  }
+
+  @override
+  Future<void> flush() async {
+    final serialized = json.encode(subject.value);
+    File _file = await _getFile();
+    await _file.writeAsString(serialized, flush: true);
+    return;
+  }
+
+  @override
+  T read<T>(String key) {
+    return subject.value[key] as T;
+  }
+
+  @override
+  Future<void> init([Map<String, dynamic> initialData]) async {
+    subject.value = initialData ?? <String, dynamic>{};
+    File _file = await _getFile();
+    if (_file.existsSync()) {
+      return _readFile();
+    } else {
+      return _writeFile(subject.value);
+    }
+  }
+
+  @override
+  Future<void> remove(String key) async {
+    subject
+      ..value.remove(key)
+      ..update();
+    await _writeFile(subject.value);
+  }
+
+  @override
+  Future<void> write(String key, dynamic value) async {
+    subject
+      ..value[key] = value
+      ..update();
+    await _writeFile(subject.value);
+  }
+
+  Future<void> _writeFile(Map<String, dynamic> data) async {
+    File _file = await _getFile();
+    _file.writeAsString(json.encode(data), flush: true);
+  }
+
+  Future<void> _readFile() async {
+    File _file = await _getFile();
+    final content = await _file.readAsString();
+    subject.value = json?.decode(content) as Map<String, dynamic>;
+  }
+
+  Future<File> _getFile() async {
+    final dir = await _getDocumentDir();
+    final _path = path ?? dir.path;
+    final _file = File('$_path/$fileName');
+    return _file;
+  }
+
+  Future<Directory> _getDocumentDir() async {
+    try {
+      return await getApplicationDocumentsDirectory();
+    } catch (err) {
+      throw err;
+    }
+  }
+}
