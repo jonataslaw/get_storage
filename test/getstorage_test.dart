@@ -1,20 +1,73 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_storage/src/storage_impl.dart';
 
-Future<void> main() async {
-  await GetStorage.init();
+void main() async {
+  var container1 = await GetStorage.init();
   final g = GetStorage();
+  g.erase();
 
-  test('adds one to input values', () async {
-    g.write('test', 'aaaaaaaa');
-    g.listen(() {
-      print(g.read('test'));
+  test('write, read listen, e removeListen', () async {
+    String valueListen = "";
+    g.write('test', 'a');
+
+    void boxListener() => valueListen = g.read('test');
+    g.listen(boxListener);
+
+    expect('a', g.read('test'));
+
+    await g.write('test', 'b');
+    expect('b', g.read<String>('test'));
+    expect('b', valueListen);
+
+    g.removeListen(boxListener);
+
+    await g.write('test', 'c');
+
+    expect('c', g.read<String>('test'));
+    expect('b', valueListen);
+    await g.write('test', 'd');
+
+    expect('d', g.read<String>('test'));
+  });
+
+  test('Write and read', () {
+    g.erase();
+    var list = new List<int>.generate(50, (i) {
+      int count = i + 1;
+      g.write('write', count);
+      print(count);
+      return count;
     });
 
-    expect('aaaaaaaa', g.read<String>('test'));
+    expect(list.last, g.read('write'));
+  });
 
-    await g.write('test', 'bbbbbbb');
-    await g.write('test', 'cccccccc');
-    await g.write('test', 'ddddddd');
+  test('Write, read, remove and exists', () {
+    g.erase();
+    expect(null, g.read('write'));
+
+    var list = new List<int>.generate(50, (i) {
+      int count = i + 1;
+      g.write('write', count);
+      print(count);
+      return count;
+    });
+    expect(list.last, g.read('write'));
+    g.remove('write');
+    expect(null, g.read('write'));
+  });
+
+  test('newContainer', () async {
+    final newContainer = GetStorage('newContainer');
+    await GetStorage.init('newContainer');
+
+    /// Attempting to start a Container that has already started must return the container already created.
+    var container2 = await GetStorage.init();
+    expect(container1 == container2, true);
+
+    newContainer.write('test', '1234');
+    g.write('test', 'a');
+    expect(g.read('test') == newContainer.read('test'), false);
+    g.erase();
   });
 }
