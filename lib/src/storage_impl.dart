@@ -1,7 +1,7 @@
-import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'storage/html.dart' if (dart.library.io) 'storage/io.dart';
+import 'value.dart';
 
 /// Instantiate GetStorage to access storage driver apis
 class GetStorage {
@@ -53,9 +53,33 @@ class GetStorage {
     return _concrete.read(key);
   }
 
+  /// return data true if value is different of null;
+  bool hasData(String key) {
+    return (read(key) == null ? false : true);
+  }
+
+  Map<String, dynamic> get changes => _concrete.subject.changes;
+
   /// Listen changes in your container
   void listen(void Function() value) {
     _concrete.subject.addListener(value);
+  }
+
+  Map<Function, Function> _keyListeners = <Function, Function>{};
+
+  void listenKey(String key, Function(dynamic) callback) {
+    final listen = () {
+      if (changes.keys.first == key) {
+        callback(changes[key]);
+      }
+    };
+    _concrete.subject.addListener(listen);
+    _keyListeners[callback] = listen;
+  }
+
+  /// Remove listen of your container
+  void removeKeyListen(Function(Map<String, dynamic>) callback) {
+    _concrete.subject.removeListener(_keyListeners[callback]);
   }
 
   /// Remove listen of your container
@@ -70,6 +94,16 @@ class GetStorage {
         json.encode(objectToEncode != null ? objectToEncode(value) : value);
     await _concrete.write(key, json.decode(_encoded));
 
+    return _tryFlush();
+  }
+
+  /// Write data on your only if data is null
+  Future<void> writeIfNull(String key, dynamic value,
+      [EncodeObject objectToEncode]) async {
+    if (read(key) != null) return;
+    final _encoded =
+        json.encode(objectToEncode != null ? objectToEncode(value) : value);
+    await _concrete.write(key, json.decode(_encoded));
     return _tryFlush();
   }
 
@@ -104,6 +138,9 @@ class GetStorage {
 
   StorageImpl _concrete;
 
+  /// listenable of container
+  Value<Map<String, dynamic>> get listenable => _concrete.subject;
+
   /// Start the storage drive. Importate: use await before calling this api, or side effects will happen.
   Future<bool> initStorage;
 
@@ -113,3 +150,5 @@ class GetStorage {
 }
 
 typedef EncodeObject = Object Function(Object);
+
+typedef KeyCallback = Function(String);

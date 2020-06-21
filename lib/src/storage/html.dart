@@ -15,6 +15,10 @@ class StorageImpl {
   Future<void> clear() async {
     localStorage.remove(fileName);
     subject.value.clear();
+
+    subject
+      ..value.clear()
+      ..update("", 2, null);
   }
 
   Future<bool> _exists() async {
@@ -42,14 +46,14 @@ class StorageImpl {
   Future<void> remove(String key) {
     subject
       ..value.remove(key)
-      ..update();
+      ..update(key, 1, null);
     return _writeToStorage(subject.value);
   }
 
   Future<void> write(String key, dynamic value) {
     subject
       ..value[key] = value
-      ..update();
+      ..update(key, 0, value);
     return _writeToStorage(subject.value);
   }
 

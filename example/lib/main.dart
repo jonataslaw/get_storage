@@ -1,50 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 void main() async {
   await GetStorage.init();
-  runApp(GetMaterialApp(home: Home()));
+  runApp(App());
 }
 
-class Controller extends GetController {
+class App extends StatelessWidget {
   final box = GetStorage();
-  int counter;
 
-  @override
-  onInit() {
-    counter = box.read('key') ?? 0;
-    box.listen(() => update());
-  }
-
-  void increment() {
-    counter++;
-    box.write('key', counter);
-  }
-}
-
-class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Get Storage")),
-      body: Center(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'You have pushed the button this many times:',
+
+    // We will insert a value into the storage if it does not already have one, otherwise it will ignore it.
+    box.writeIfNull('darkmode', false);
+    
+    // ValueListenableBuilder is a Flutter widget
+    return ValueListenableBuilder(
+        valueListenable: box.listenable,
+        builder: (c, read, w) {
+          bool isDark = box.read('darkmode');
+          print(read['darkmode']); // its work too
+          return MaterialApp(
+            theme: isDark ? ThemeData.dark() : ThemeData.light(),
+            home: Scaffold(
+              appBar: AppBar(title: Text("Get Storage")),
+              body: Center(
+                child: SwitchListTile(
+                  value: isDark,
+                  title: Text("Touch to change ThemeMode"),
+                  onChanged: (val) => box.write('darkmode', val),
+                ),
               ),
-              GetBuilder<Controller>(
-                  init: Controller(),
-                  builder: (_) =>
-                      Text('${_.counter}', style: Get.textTheme.headline4)),
-            ]),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Get.find<Controller>().increment(),
-        child: Icon(Icons.add),
-      ),
-    );
+            ),
+          );
+        });
   }
 }

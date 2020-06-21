@@ -14,6 +14,9 @@ class StorageImpl {
 
   Future<void> clear() async {
     File _file = await _getFile();
+    subject
+      ..value.clear()
+      ..update("", 2, null);
     subject.value.clear();
     return _file.deleteSync();
   }
@@ -47,14 +50,14 @@ class StorageImpl {
   Future<void> remove(String key) async {
     subject
       ..value.remove(key)
-      ..update();
+      ..update(key, 1, null);
     await _writeFile(subject.value);
   }
 
   Future<void> write(String key, dynamic value) async {
     subject
       ..value[key] = value
-      ..update();
+      ..update(key, 0, value);
     await _writeFile(subject.value);
   }
 

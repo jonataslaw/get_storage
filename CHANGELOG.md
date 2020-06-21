@@ -1,3 +1,6 @@
+## [1.1.4] 
+- Prevent spaces on database.gs
+
 ## [1.1.3] 
 - Fix unnecessary imports
 

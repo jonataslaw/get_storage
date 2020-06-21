@@ -1,6 +1,6 @@
 name: get_storage
 description: A fast, extra light and synchronous key-value storage written entirely in Dart
-version: 1.1.3
+version: 1.1.4
 homepage: https://github.com/jonataslaw/get_storage
 
 environment:

@@ -2,6 +2,7 @@
 A fast, extra light and synchronous key-value storage written entirely in Dart to Get framework of Flutter.
 
 Supports Android, iOS, Web, Mac, Linux, and fuchsia (Wip on Windows). 
+Can store String, int, double, Map and List
 
 Add to your pubspec:
 ```
