@@ -50,10 +50,12 @@ If you subscribe to events, be sure to dispose them when using:
 box.removeListen(listen);
 ```
 To listen changes on key you can use `listenKey`:
+
 ```dart
 box.listenKey('key', (value){
   print('new key is $value');
 });
+```
 
 To erase your container:
 ```dart
@@ -81,6 +83,20 @@ await GetStorage.init('MyStorage');
 Persistent key/value storage for Android, iOS, Web, Linux, Mac and Fuchsia (soon to be Windows) that combines fast memory access with persistent storage.
 ## What GetStorage is NOT:
 A database. Get is super compact to offer you a solution ultra-light, high-speed read/write storage to work synchronously. If you want to store data persistently on disk with immediate memory access, use it, if you want a database, with indexing and specific disk storage tools, there are incredible solutions that are already available, like Hive and Sqflite/Moor.
+
+
+As soon as you declare "write" the file is immediately written in memory and can now be accessed immediately with `box.read()`. You can also wait for the callback that it was written to disk using `await box.write()`.
+
+## When to use GetStorage:
+1- simple Maps storage.
+2- cache of http requests
+3- storage of simple user information.
+4- simple and persistent state storage
+5- any situation you currently use sharedPreferences.
+
+## When not to use GetStorage:
+1- you need indexes.
+2- when you need to always check if the file was written to the storage disk before starting another operation (storage in memory is done instantly and can be read instantly with box.read(), and the backup to disk is done in the background. To make sure the backup is complete, you can use await, but if you need to call await all the time, it makes no sense you are using memory storage).
 
 Each container has an output for `.listenable`, so you can use this lib even as a modest persistent state manager using ValueListenableBuilder
 
