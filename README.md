@@ -1,7 +1,8 @@
 # get_storage
-A fast, extra light and synchronous key-value storage written entirely in Dart to Get framework of Flutter.
+A fast, extra light and synchronous key-value in memory, which backs up data to disk at each operation.
+It is written entirely in Dart and easily integrates with Get framework of Flutter.
 
-Supports Android, iOS, Web, Mac, Linux, and fuchsia (Wip on Windows). 
+Supports Android, iOS, Web, Mac, Linux, and fuchsia and Windows**. 
 Can store String, int, double, Map and List
 
 Add to your pubspec:
@@ -17,7 +18,7 @@ main() async {
   runApp(App());
 }
 ```
-use GetStorage through an instance or use directly 'GetStorage().read('key')'
+use GetStorage through an instance or use directly `GetStorage().read('key')`
 ```dart
 final box = GetStorage();
 ```
@@ -46,8 +47,14 @@ box.listen((){
 ```
 If you subscribe to events, be sure to dispose them when using:
 ```dart
-box.dispose();
+box.removeListen(listen);
 ```
+To listen changes on key you can use `listenKey`:
+```dart
+box.listenKey('key', (value){
+  print('new key is $value');
+});
+
 To erase your container:
 ```dart
 box.erase();
@@ -64,15 +71,17 @@ To initialize specific container:
 await GetStorage.init('MyStorage');
 ```
 
-**GetStorage is not fast, it is absurdly fast, so fast that you can write a file and then read it immediately.**
+**GetStorage is not fast, it is absurdly fast for being memory-based. All of his operations are instantaneous. A backup of each operation is placed in a Container on the disk. Each container has its own file.**
 
 ![](delete.png)
 ![](write.png)
 ![](read.png)
 
 ## What GetStorage is:
-Persistent key/value storage for Android, iOS, Web, Linux, Mac and Fuchsia (soon to be Windows) that combines persistent storage with fast memory access.
+Persistent key/value storage for Android, iOS, Web, Linux, Mac and Fuchsia (soon to be Windows) that combines fast memory access with persistent storage.
 ## What GetStorage is NOT:
-A database. Get is super compact to offer you a solution ultra-light, high-speed read/write storage to work synchronously. If you want to store data persistently, use it, if you want a database, with indexing there are incredible solutions that are already available, like Hive and Sqflite/Moor.
+A database. Get is super compact to offer you a solution ultra-light, high-speed read/write storage to work synchronously. If you want to store data persistently on disk with immediate memory access, use it, if you want a database, with indexing and specific disk storage tools, there are incredible solutions that are already available, like Hive and Sqflite/Moor.
+
+Each container has an output for `.listenable`, so you can use this lib even as a modest persistent state manager using ValueListenableBuilder
 
 
