@@ -97,6 +97,10 @@ class GetStorage {
     return _tryFlush();
   }
 
+  void writeInMemory(String key, dynamic value) {
+    _concrete.writeInMemory(key, value);
+  }
+
   /// Write data on your only if data is null
   Future<void> writeIfNull(String key, dynamic value,
       [EncodeObject objectToEncode]) async {
@@ -116,6 +120,10 @@ class GetStorage {
   /// clear all data on your container
   Future<void> erase() async {
     await _concrete.clear();
+    return _tryFlush();
+  }
+
+  Future<void> save() async {
     return _tryFlush();
   }
 

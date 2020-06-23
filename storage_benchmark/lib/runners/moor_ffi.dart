@@ -64,6 +64,7 @@ class MoorFfiRunner implements BenchmarkRunner {
   @override
   Future<int> batchWriteInt(Map<String, int> entries) async {
     var s = Stopwatch()..start();
+    db.execute("BEGIN TRANSACTION");
     final stmt = db.prepare(
         'INSERT OR REPLACE INTO $TABLE_NAME_INT (key, value) VALUES (?, ?)');
 
@@ -71,6 +72,7 @@ class MoorFfiRunner implements BenchmarkRunner {
       stmt.execute([key, value]);
     });
 
+    db.execute("COMMIT");
     stmt.close();
     s.stop();
     return s.elapsedMilliseconds;
@@ -79,6 +81,7 @@ class MoorFfiRunner implements BenchmarkRunner {
   @override
   Future<int> batchWriteString(Map<String, String> entries) async {
     var s = Stopwatch()..start();
+    db.execute("BEGIN TRANSACTION");
     final stmt = db.prepare(
         'INSERT OR REPLACE INTO $TABLE_NAME_STR (key, value) VALUES (?, ?)');
 
@@ -86,6 +89,7 @@ class MoorFfiRunner implements BenchmarkRunner {
       stmt.execute([key, value]);
     });
 
+    db.execute("COMMIT");
     stmt.close();
     s.stop();
     return s.elapsedMilliseconds;

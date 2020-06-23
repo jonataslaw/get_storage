@@ -38,12 +38,19 @@ class SqfliteStore {
     return result[0]['value'] as int;
   }
 
-  Future putInt(String key, int value) {
-    return db.insert(
-      TABLE_NAME_INT,
-      {'key': key, 'value': value},
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+  Future<void> putInts(Map<String, int> entries) async {
+    await db.transaction((txn) async {
+      final b = txn.batch();
+
+      for (var key in entries.keys) {
+        b.insert(
+          TABLE_NAME_INT,
+          {'key': key, 'value': entries[key]},
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+      await b.commit();
+    });
   }
 
   Future deleteInt(String key) {
@@ -63,12 +70,19 @@ class SqfliteStore {
     return result[0]['value'] as String;
   }
 
-  Future putString(String key, String value) {
-    return db.insert(
-      TABLE_NAME_STR,
-      {'key': key, 'value': value},
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+  Future<void> putStrings(Map<String, String> entries) async {
+    await db.transaction((txn) async {
+      final b = txn.batch();
+
+      for (var key in entries.keys) {
+        b.insert(
+          TABLE_NAME_STR,
+          {'key': key, 'value': entries[key]},
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+      await b.commit();
+    });
   }
 
   Future deleteString(String key) {

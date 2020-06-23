@@ -51,10 +51,14 @@ class StorageImpl {
   }
 
   Future<void> write(String key, dynamic value) {
+    writeInMemory(key, value);
+    return _writeToStorage(subject.value);
+  }
+
+  void writeInMemory(String key, dynamic value) {
     subject
       ..value[key] = value
       ..update(key, 0, value);
-    return _writeToStorage(subject.value);
   }
 
   Future<void> _writeToStorage(Map<String, dynamic> data) async {

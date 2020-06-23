@@ -14,7 +14,7 @@ class GetStorageRunner implements BenchmarkRunner {
 
   @override
   Future<void> tearDown() async {
-    // nothing to do here, cleared in setUp
+    await prefs.erase();
   }
 
   @override
@@ -41,8 +41,11 @@ class GetStorageRunner implements BenchmarkRunner {
   Future<int> batchWriteInt(Map<String, int> entries) async {
     var s = Stopwatch()..start();
     for (var key in entries.keys) {
-      prefs.write(key, entries[key]);
+      prefs.writeInMemory(key, entries[key]);
     }
+
+    await prefs.save();
+
     s.stop();
     return s.elapsedMilliseconds;
   }
@@ -50,10 +53,12 @@ class GetStorageRunner implements BenchmarkRunner {
   @override
   Future<int> batchWriteString(Map<String, String> entries) async {
     var s = Stopwatch()..start();
-
     for (var key in entries.keys) {
-      prefs.write(key, entries[key]);
+      prefs.writeInMemory(key, entries[key]);
     }
+
+    await prefs.save();
+
     s.stop();
     return s.elapsedMilliseconds;
   }
