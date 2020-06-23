@@ -42,9 +42,7 @@ class SqfliteRunner implements BenchmarkRunner {
   @override
   Future<int> batchWriteInt(Map<String, int> entries) async {
     var s = Stopwatch()..start();
-    for (var key in entries.keys) {
-      await store.putInt(key, entries[key]);
-    }
+    await store.putInts(entries);
     s.stop();
     return s.elapsedMilliseconds;
   }
@@ -52,9 +50,7 @@ class SqfliteRunner implements BenchmarkRunner {
   @override
   Future<int> batchWriteString(Map<String, String> entries) async {
     var s = Stopwatch()..start();
-    for (var key in entries.keys) {
-      await store.putString(key, entries[key]);
-    }
+    await store.putStrings(entries);
     s.stop();
     return s.elapsedMilliseconds;
   }

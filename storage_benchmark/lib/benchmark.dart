@@ -36,7 +36,7 @@ Map<String, int> generateIntEntries(int count) {
   var map = Map<String, int>();
   var random = Random();
   for (var i = 0; i < count; i++) {
-    var key = randStr.randomAlphaNumeric(randStr.randomBetween(5, 200));
+    var key = randStr.randomAlphaNumeric(10);
     var val = random.nextInt(2 ^ 50);
     map[key] = val;
   }
@@ -46,8 +46,8 @@ Map<String, int> generateIntEntries(int count) {
 Map<String, String> generateStringEntries(int count) {
   var map = Map<String, String>();
   for (var i = 0; i < count; i++) {
-    var key = randStr.randomAlphaNumeric(randStr.randomBetween(5, 200));
-    var val = randStr.randomString(randStr.randomBetween(5, 1000));
+    var key = randStr.randomAlphaNumeric(10);
+    var val = randStr.randomString(10);
     map[key] = val;
   }
   return map;
