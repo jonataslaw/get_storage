@@ -6,7 +6,7 @@ import 'value.dart';
 /// Instantiate GetStorage to access storage driver apis
 class GetStorage {
   factory GetStorage(
-      [String container = 'GetStorage',
+      [String container = defaultContainer,
       String path,
       Map<String, dynamic> initialData]) {
     if (_sync.containsKey(container)) {
@@ -32,7 +32,7 @@ class GetStorage {
   static final Map<String, GetStorage> _sync = {};
 
   /// Start the storage drive. Importate: use await before calling this api, or side effects will happen.
-  static Future<bool> init([String container = 'GetStorage']) {
+  static Future<bool> init([String container = defaultContainer]) {
     WidgetsFlutterBinding.ensureInitialized();
     if (container == null) {
       throw 'key can not be null';
@@ -160,3 +160,5 @@ class GetStorage {
 typedef EncodeObject = Object Function(Object);
 
 typedef KeyCallback = Function(String);
+
+const defaultContainer = 'GetStorage';
