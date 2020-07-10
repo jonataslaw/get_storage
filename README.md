@@ -82,9 +82,21 @@ class MyPref {
   var price = 1000.val('price', storageKey: _otherStorage);
 
   // or
+
   static final defaultStorage = () => GetStorage('MyPref');
   var username2 = ReadWriteValue('username', '', defaultStorage);
   var age2 = ReadWriteValue('age', 0, defaultStorage);
+}
+...
+void updateAge() {
+  var age = 0.val('age');
+  // or 
+  var age = ReadWriteValue('age', 0, () => box);
+  // or 
+  var age = Get.find<MyPref>().age;
+
+  age.val = 1; // will save to box
+  final realAge = age.val; // will read from box
 }
 ```
 
