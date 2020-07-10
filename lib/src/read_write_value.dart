@@ -21,10 +21,10 @@ class ReadWriteValue<T> {
 
 extension Data<T> on T {
   ReadWriteValue<T> val(
-    String valueKey, [
+    String valueKey, {
     String storageKey = defaultContainer,
     T defVal,
-  ]) {
+  }) {
     return ReadWriteValue(
       valueKey,
       defVal ?? this,
