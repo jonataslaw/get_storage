@@ -78,24 +78,24 @@ await GetStorage.init('MyStorage');
 class MyPref {
   static final _otherBox = () => GetStorage('MyPref');
 
-  var username = ''.val('username');
-  var age = 0.val('age');
-  var price = 1000.val('price', getBox: _otherBox);
+  final username = ''.val('username');
+  final age = 0.val('age');
+  final price = 1000.val('price', getBox: _otherBox);
 
   // or
-  var username2 = ReadWriteValue('username', '');
-  var age2 = ReadWriteValue('age', 0);
-  var price2 = ReadWriteValue('price', '', _otherBox);
+  final username2 = ReadWriteValue('username', '');
+  final age2 = ReadWriteValue('age', 0);
+  final price2 = ReadWriteValue('price', '', _otherBox);
 }
 
 ...
 
 void updateAge() {
-  var age = 0.val('age');
+  final age = 0.val('age');
   // or 
-  var age = ReadWriteValue('age', 0, () => box);
+  final age = ReadWriteValue('age', 0, () => box);
   // or 
-  var age = Get.find<MyPref>().age;
+  final age = Get.find<MyPref>().age;
 
   age.val = 1; // will save to box
   final realAge = age.val; // will read from box

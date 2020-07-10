@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_storage/src/storage_impl.dart';
+import 'package:get_storage/src/read_write_value.dart';
 
 void main() async {
   var container1 = await GetStorage.init();
@@ -40,6 +41,19 @@ void main() async {
     });
 
     expect(list.last, g.read('write'));
+  });
+
+  test('Write and read using delegate', () {
+    g.erase();
+    final data = 0.val('write');
+    var list = new List<int>.generate(50, (i) {
+      int count = i + 1;
+      data.val = count;
+      print(count);
+      return count;
+    });
+
+    expect(list.last, data.val);
   });
 
   test('Write, read, remove and exists', () {
