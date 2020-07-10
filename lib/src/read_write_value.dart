@@ -25,10 +25,6 @@ extension Data<T> on T {
     StorageFactory getBox,
     T defVal,
   }) {
-    return ReadWriteValue(
-      valueKey,
-      defVal ?? this,
-      getBox ?? () => GetStorage(),
-    );
+    return ReadWriteValue(valueKey, defVal ?? this, getBox);
   }
 }
