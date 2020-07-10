@@ -76,18 +76,20 @@ await GetStorage.init('MyStorage');
 ## SharedPreferences Implementation
 ```dart
 class MyPref {
+  static final _otherBox = () => GetStorage('MyPref');
+
   var username = ''.val('username');
   var age = 0.val('age');
-  static const _otherStorage = 'MyPref';
-  var price = 1000.val('price', storageKey: _otherStorage);
+  var price = 1000.val('price', getBox: _otherBox);
 
   // or
-
-  static final defaultStorage = () => GetStorage('MyPref');
-  var username2 = ReadWriteValue('username', '', defaultStorage);
-  var age2 = ReadWriteValue('age', 0, defaultStorage);
+  var username2 = ReadWriteValue('username', '');
+  var age2 = ReadWriteValue('age', 0);
+  var price2 = ReadWriteValue('price', '', _otherBox);
 }
+
 ...
+
 void updateAge() {
   var age = 0.val('age');
   // or 

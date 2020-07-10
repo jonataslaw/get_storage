@@ -6,29 +6,29 @@ class ReadWriteValue<T> {
   final String key;
   final T defaultValue;
   final StorageFactory getBox;
-  final EncodeObject objectEncoder;
+  final EncodeObject encoder;
 
   ReadWriteValue(
     this.key,
-    this.defaultValue,
-    this.getBox, [
-    this.objectEncoder,
+    this.defaultValue, [
+    this.getBox,
+    this.encoder,
   ]);
 
-  T get val => getBox().read(key) ?? defaultValue;
-  set val(T newValue) => getBox().write(key, newValue, objectEncoder);
+  T get val => (getBox() ?? GetStorage()).read(key) ?? defaultValue;
+  set val(T newVal) => (getBox() ?? GetStorage()).write(key, newVal, encoder);
 }
 
 extension Data<T> on T {
   ReadWriteValue<T> val(
     String valueKey, {
-    String storageKey = defaultContainer,
+    StorageFactory getBox,
     T defVal,
   }) {
     return ReadWriteValue(
       valueKey,
       defVal ?? this,
-      () => GetStorage(storageKey),
+      getBox ?? () => GetStorage(),
     );
   }
 }
