@@ -1,3 +1,9 @@
+## [1.3.0] 
+- Added ReadWriteValue
+
+## [1.2.0] 
+- Added writeInMemory and save methods
+
 ## [1.1.4] 
 - Prevent spaces on database.gs
 

@@ -9,8 +9,8 @@ class StorageImpl {
 
   final String path, fileName;
 
-  Value<Map<String, dynamic>> subject =
-      Value<Map<String, dynamic>>(<String, dynamic>{});
+  ValueStorage<Map<String, dynamic>> subject =
+      ValueStorage<Map<String, dynamic>>(<String, dynamic>{});
 
   Future<void> clear() async {
     localStorage.remove(fileName);
@@ -18,7 +18,7 @@ class StorageImpl {
 
     subject
       ..value.clear()
-      ..update("", 2, null);
+      ..change("", null);
   }
 
   Future<bool> _exists() async {
@@ -46,7 +46,7 @@ class StorageImpl {
   Future<void> remove(String key) {
     subject
       ..value.remove(key)
-      ..update(key, 1, null);
+      ..change(key, null);
     return _writeToStorage(subject.value);
   }
 
@@ -58,7 +58,7 @@ class StorageImpl {
   void writeInMemory(String key, dynamic value) {
     subject
       ..value[key] = value
-      ..update(key, 0, value);
+      ..change(key, value);
   }
 
   Future<void> _writeToStorage(Map<String, dynamic> data) async {

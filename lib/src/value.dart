@@ -1,12 +1,12 @@
-import 'package:flutter/foundation.dart';
+import 'package:get/state_manager.dart';
 
-class Value<T> extends ValueNotifier<T> {
-  Value(T value) : super(value);
+class ValueStorage<T> extends Value<T> {
+  ValueStorage(T value) : super(value);
 
   Map<String, dynamic> changes = <String, dynamic>{};
 
-  void update(String key, int op, dynamic value) {
-    if (hasListeners) changes = {key: value};
-    notifyListeners();
+  void change(String key, dynamic value) {
+    changes = {key: value};
+    update();
   }
 }

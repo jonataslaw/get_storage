@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 import 'storage/html.dart' if (dart.library.io) 'storage/io.dart';
 import 'value.dart';
 
@@ -61,31 +62,32 @@ class GetStorage {
   Map<String, dynamic> get changes => _concrete.subject.changes;
 
   /// Listen changes in your container
-  void listen(void Function() value) {
-    _concrete.subject.addListener(value);
+  Disposer listen(void Function() value) {
+    return _concrete.subject.addListener((e) => value);
   }
 
   Map<Function, Function> _keyListeners = <Function, Function>{};
 
-  void listenKey(String key, Function(dynamic) callback) {
-    final listen = () {
+  Disposer listenKey(String key, Function(dynamic) callback) {
+    final listen = (e) {
       if (changes.keys.first == key) {
         callback(changes[key]);
       }
     };
-    _concrete.subject.addListener(listen);
+
     _keyListeners[callback] = listen;
+    return _concrete.subject.addListener(listen);
   }
 
-  /// Remove listen of your container
-  void removeKeyListen(Function(Map<String, dynamic>) callback) {
-    _concrete.subject.removeListener(_keyListeners[callback]);
-  }
+  // /// Remove listen of your container
+  // void removeKeyListen(Function(Map<String, dynamic>) callback) {
+  //   _concrete.subject.removeListener(_keyListeners[callback]);
+  // }
 
-  /// Remove listen of your container
-  void removeListen(void Function() listener) {
-    _concrete.subject.removeListener(listener);
-  }
+  // /// Remove listen of your container
+  // void removeListen(void Function() listener) {
+  //   _concrete.subject.removeListener(listener);
+  // }
 
   /// Write data on your container
   Future<void> write(String key, dynamic value,
@@ -147,7 +149,7 @@ class GetStorage {
   StorageImpl _concrete;
 
   /// listenable of container
-  Value<Map<String, dynamic>> get listenable => _concrete.subject;
+  ValueStorage<Map<String, dynamic>> get listenable => _concrete.subject;
 
   /// Start the storage drive. Importate: use await before calling this api, or side effects will happen.
   Future<bool> initStorage;

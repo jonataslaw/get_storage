@@ -12,7 +12,7 @@ void main() async {
     g.write('test', 'a');
 
     void boxListener() => valueListen = g.read('test');
-    g.listen(boxListener);
+    final removeListen = g.listen(boxListener);
 
     expect('a', g.read('test'));
 
@@ -20,7 +20,7 @@ void main() async {
     expect('b', g.read<String>('test'));
     expect('b', valueListen);
 
-    g.removeListen(boxListener);
+    removeListen();
 
     await g.write('test', 'c');
 
