@@ -33,6 +33,10 @@ class StorageImpl {
     return subject.value[key] as T;
   }
 
+  T readAll<T>() {
+    return subject.value as T;
+  }
+
   Future<void> init([Map<String, dynamic> initialData]) async {
     subject.value = initialData ?? <String, dynamic>{};
     if (await _exists()) {
