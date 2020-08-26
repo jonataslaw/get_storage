@@ -54,8 +54,8 @@ class GetStorage {
     return _concrete.read(key);
   }
 
-  T readAll<T>() {
-    return _concrete.readAll();
+  T getKeys<T>() {
+    return _concrete.getKeys();
   }
 
   /// return data true if value is different of null;

@@ -33,8 +33,8 @@ class StorageImpl {
     return subject.value[key] as T;
   }
 
-  T readAll<T>() {
-    return subject.value as T;
+  T getKeys<T>() {
+    return subject.value.keys as T;
   }
 
   Future<void> init([Map<String, dynamic> initialData]) async {

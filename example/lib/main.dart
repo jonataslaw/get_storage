@@ -39,6 +39,7 @@ class App extends StatelessWidget {
 
   Future<void> runTests() async {
     final storage = GetStorage('test');
+    await storage.erase();
 
     testReadAllMethod(storage, 1, 'name', 'Peter');
     testReadAllMethod(storage, 2, 'age', 27);
@@ -46,19 +47,17 @@ class App extends StatelessWidget {
 
     storage.remove('name');
     storage.remove('sex');
-    final Map<String, dynamic> values = storage.readAll();
+    final values = storage.getKeys();
     assert(values.length == 1);
     print(values);
-    assert(values.toString() == "{age: 27}");
-
-    await storage.erase();
+    assert(values.first == 'age');
   }
 
   void testReadAllMethod(
       GetStorage storage, int expectedLength, String key, dynamic value) {
     storage.write(key, value);
     assert(storage.read(key) == value);
-    final values = storage.readAll();
+    final Iterable<String> values = storage.getKeys();
     final length = values.length;
     print('$values with length of $length');
     assert(expectedLength == length);
