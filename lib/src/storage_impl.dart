@@ -58,6 +58,10 @@ class GetStorage {
     return _concrete.getKeys();
   }
 
+  T getValues<T>() {
+    return _concrete.getValues();
+  }
+
   /// return data true if value is different of null;
   bool hasData(String key) {
     return (read(key) == null ? false : true);

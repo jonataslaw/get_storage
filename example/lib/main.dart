@@ -57,9 +57,11 @@ class App extends StatelessWidget {
       GetStorage storage, int expectedLength, String key, dynamic value) {
     storage.write(key, value);
     assert(storage.read(key) == value);
-    final Iterable<String> values = storage.getKeys();
-    final length = values.length;
-    print('$values with length of $length');
-    assert(expectedLength == length);
+    final Iterable<String> keys = storage.getKeys();
+    final Iterable<dynamic> values = storage.getValues();
+    print('$keys with length of ${keys.length}');
+    print('$values with length of ${values.length}');
+    assert(expectedLength == keys.length);
+    assert(expectedLength == values.length);
   }
 }

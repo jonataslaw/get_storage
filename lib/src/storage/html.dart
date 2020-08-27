@@ -37,6 +37,10 @@ class StorageImpl {
     return subject.value.keys as T;
   }
 
+  T getValues<T>() {
+    return subject.value.values as T;
+  }
+
   Future<void> init([Map<String, dynamic> initialData]) async {
     subject.value = initialData ?? <String, dynamic>{};
     if (await _exists()) {
