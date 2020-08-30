@@ -54,7 +54,6 @@ void main() async {
     var list = new List<int>.generate(50, (i) {
       int count = i + 1;
       g.write('write', count);
-      print(count);
       return count;
     });
 
@@ -67,7 +66,6 @@ void main() async {
     var list = new List<int>.generate(50, (i) {
       int count = i + 1;
       data.val = count;
-      print(count);
       return count;
     });
 
@@ -81,7 +79,6 @@ void main() async {
     var list = new List<int>.generate(50, (i) {
       int count = i + 1;
       g.write('write', count);
-      print(count);
       return count;
     });
     expect(list.last, g.read('write'));
