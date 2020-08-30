@@ -7,7 +7,6 @@ void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   GetStorage g;
-  bool container1;
 
   const channel = MethodChannel('plugins.flutter.io/path_provider');
   void setUpMockChannels(MethodChannel channel) {
@@ -20,7 +19,7 @@ void main() async {
 
   setUpAll(() async {
     setUpMockChannels(channel);
-    container1 = await GetStorage.init();
+    await GetStorage.init();
     g = GetStorage();
     await g.erase();
   });
@@ -87,6 +86,7 @@ void main() async {
   });
 
   test('newContainer', () async {
+    final container1 = await GetStorage.init('container1');
     await GetStorage.init('newContainer');
     final newContainer = GetStorage('newContainer');
 
