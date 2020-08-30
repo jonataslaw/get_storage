@@ -19,6 +19,9 @@ void main() async {
 
   setUpAll(() async {
     setUpMockChannels(channel);
+  });
+
+  setUp(() async {
     await GetStorage.init();
     g = GetStorage();
     await g.erase();
@@ -49,7 +52,6 @@ void main() async {
   }, skip: true);
 
   test('Write and read', () {
-    g.erase();
     var list = new List<int>.generate(50, (i) {
       int count = i + 1;
       g.write('write', count);
@@ -60,7 +62,6 @@ void main() async {
   });
 
   test('Write and read using delegate', () {
-    g.erase();
     final data = 0.val('write');
     var list = new List<int>.generate(50, (i) {
       int count = i + 1;
@@ -72,7 +73,6 @@ void main() async {
   });
 
   test('Write, read, remove and exists', () {
-    g.erase();
     expect(null, g.read('write'));
 
     var list = new List<int>.generate(50, (i) {
@@ -97,6 +97,5 @@ void main() async {
     newContainer.write('test', '1234');
     g.write('test', 'a');
     expect(g.read('test') == newContainer.read('test'), false);
-    g.erase();
   });
 }
