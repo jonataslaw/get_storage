@@ -1,11 +1,29 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_storage/src/storage_impl.dart';
 import 'package:get_storage/src/read_write_value.dart';
 
 void main() async {
-  var container1 = await GetStorage.init();
-  final g = GetStorage();
-  g.erase();
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  GetStorage g;
+  bool container1;
+
+  const channel = MethodChannel('plugins.flutter.io/path_provider');
+  void setUpMockChannels(MethodChannel channel) {
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      if (methodCall.method == 'getApplicationDocumentsDirectory') {
+        return '.';
+      }
+    });
+  }
+
+  setUpAll(() async {
+    setUpMockChannels(channel);
+    container1 = await GetStorage.init();
+    g = GetStorage();
+    await g.erase();
+  });
 
   test('write, read listen, e removeListen', () async {
     String valueListen = "";
