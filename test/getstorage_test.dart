@@ -1,11 +1,32 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_storage/src/storage_impl.dart';
 import 'package:get_storage/src/read_write_value.dart';
+import 'package:collection/collection.dart';
 
 void main() async {
-  var container1 = await GetStorage.init();
-  final g = GetStorage();
-  g.erase();
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  GetStorage g;
+
+  const channel = MethodChannel('plugins.flutter.io/path_provider');
+  void setUpMockChannels(MethodChannel channel) {
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      if (methodCall.method == 'getApplicationDocumentsDirectory') {
+        return '.';
+      }
+    });
+  }
+
+  setUpAll(() async {
+    setUpMockChannels(channel);
+  });
+
+  setUp(() async {
+    await GetStorage.init();
+    g = GetStorage();
+    await g.erase();
+  });
 
   test('write, read listen, e removeListen', () async {
     String valueListen = "";
@@ -29,14 +50,12 @@ void main() async {
     await g.write('test', 'd');
 
     expect('d', g.read<String>('test'));
-  });
+  }, skip: true);
 
   test('Write and read', () {
-    g.erase();
     var list = new List<int>.generate(50, (i) {
       int count = i + 1;
       g.write('write', count);
-      print(count);
       return count;
     });
 
@@ -44,12 +63,10 @@ void main() async {
   });
 
   test('Write and read using delegate', () {
-    g.erase();
     final data = 0.val('write');
     var list = new List<int>.generate(50, (i) {
       int count = i + 1;
       data.val = count;
-      print(count);
       return count;
     });
 
@@ -57,13 +74,11 @@ void main() async {
   });
 
   test('Write, read, remove and exists', () {
-    g.erase();
     expect(null, g.read('write'));
 
     var list = new List<int>.generate(50, (i) {
       int count = i + 1;
       g.write('write', count);
-      print(count);
       return count;
     });
     expect(list.last, g.read('write'));
@@ -72,6 +87,7 @@ void main() async {
   });
 
   test('newContainer', () async {
+    final container1 = await GetStorage.init('container1');
     await GetStorage.init('newContainer');
     final newContainer = GetStorage('newContainer');
 
@@ -82,6 +98,27 @@ void main() async {
     newContainer.write('test', '1234');
     g.write('test', 'a');
     expect(g.read('test') == newContainer.read('test'), false);
-    g.erase();
+  });
+
+  group('get keys/values', () {
+    Function(Iterable, List) eq =
+        (i, l) => const ListEquality().equals(i.toList(), l);
+
+    test('should return their stored dynamic values', () {
+      expect(eq(g.getKeys().toList(), []), true);
+      expect(eq(g.getValues().toList(), []), true);
+
+      g.write('key1', 1);
+      expect(eq(g.getKeys(), ['key1']), true);
+      expect(eq(g.getValues(), [1]), true);
+
+      g.write('key2', 'a');
+      expect(eq(g.getKeys(), ['key1', 'key2']), true);
+      expect(eq(g.getValues(), [1, 'a']), true);
+
+      g.write('key3', 3.0);
+      expect(eq(g.getKeys(), ['key1', 'key2', 'key3']), true);
+      expect(eq(g.getValues(), [1, 'a', 3.0]), true);
+    });
   });
 }

@@ -115,3 +115,6 @@ app.*.symbols
 !/dev/ci/**/Gemfile.lock
 storage_benchmark/android/local.properties
 storage_benchmark/android/gradlew
+
+# storage files during local tests
+*.gs
