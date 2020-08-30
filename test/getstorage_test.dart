@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_storage/src/storage_impl.dart';
 import 'package:get_storage/src/read_write_value.dart';
+import 'package:collection/collection.dart';
 
 void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -97,5 +98,27 @@ void main() async {
     newContainer.write('test', '1234');
     g.write('test', 'a');
     expect(g.read('test') == newContainer.read('test'), false);
+  });
+
+  group('get keys/values', () {
+    Function(Iterable, List) eq =
+        (i, l) => const ListEquality().equals(i.toList(), l);
+
+    test('should return their stored dynamic values', () {
+      expect(eq(g.getKeys().toList(), []), true);
+      expect(eq(g.getValues().toList(), []), true);
+
+      g.write('key1', 1);
+      expect(eq(g.getKeys(), ['key1']), true);
+      expect(eq(g.getValues(), [1]), true);
+
+      g.write('key2', 'a');
+      expect(eq(g.getKeys(), ['key1', 'key2']), true);
+      expect(eq(g.getValues(), [1, 'a']), true);
+
+      g.write('key3', 3.0);
+      expect(eq(g.getKeys(), ['key1', 'key2', 'key3']), true);
+      expect(eq(g.getValues(), [1, 'a', 3.0]), true);
+    });
   });
 }
