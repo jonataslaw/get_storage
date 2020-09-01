@@ -117,4 +117,4 @@ storage_benchmark/android/local.properties
 storage_benchmark/android/gradlew
 
 # storage files during local tests
-*.gs
+**/*.gs
