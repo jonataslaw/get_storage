@@ -2,7 +2,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_storage/src/storage_impl.dart';
 import 'package:get_storage/src/read_write_value.dart';
-import 'package:collection/collection.dart';
+
+import 'utils/list_equality.dart';
 
 void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -32,8 +33,9 @@ void main() async {
     String valueListen = "";
     g.write('test', 'a');
 
-    void boxListener() => valueListen = g.read('test');
-    final removeListen = g.listen(boxListener);
+    final removeListen = g.listen(() {
+      valueListen = g.read('test');
+    });
 
     expect('a', g.read('test'));
 
@@ -50,7 +52,7 @@ void main() async {
     await g.write('test', 'd');
 
     expect('d', g.read<String>('test'));
-  }, skip: true);
+  });
 
   test('Write and read', () {
     var list = new List<int>.generate(50, (i) {

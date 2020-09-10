@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/widgets.dart';
-import 'package:get/get.dart';
 import 'storage/html.dart' if (dart.library.io) 'storage/io.dart';
 import 'value.dart';
 
@@ -70,14 +69,14 @@ class GetStorage {
   Map<String, dynamic> get changes => _concrete.subject.changes;
 
   /// Listen changes in your container
-  Disposer listen(void Function() value) {
-    return _concrete.subject.addListener((e) => value);
+  VoidCallback listen(VoidCallback value) {
+    return _concrete.subject.addListener(value);
   }
 
   Map<Function, Function> _keyListeners = <Function, Function>{};
 
-  Disposer listenKey(String key, Function(dynamic) callback) {
-    final listen = (e) {
+  VoidCallback listenKey(String key, Function(dynamic) callback) {
+    final listen = () {
       if (changes.keys.first == key) {
         callback(changes[key]);
       }
