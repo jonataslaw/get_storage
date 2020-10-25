@@ -83,7 +83,7 @@ class StorageImpl {
     final content = await _file.readAsString()
       ..trim();
     subject.value =
-        json?.decode(content == "" ? {} : content) as Map<String, dynamic>;
+        json?.decode(content == "" ? "{}" : content) as Map<String, dynamic>;
   }
 
   Future<File> _getFile() async {
