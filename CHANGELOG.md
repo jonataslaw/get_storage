@@ -1,5 +1,5 @@
-## [1.3.1] 
-- Added compatibility with Getx 3.10.2
+## [1.3.2] 
+- Added compatibility with Getx 3.15.0
 
 ## [1.3.1] 
 - Added compatibility with Getx 3.10.2
