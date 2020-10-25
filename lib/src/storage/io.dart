@@ -16,7 +16,7 @@ class StorageImpl {
     File _file = await _getFile();
     subject
       ..value.clear()
-      ..change("", null);
+      ..changeValue("", null);
     subject.value.clear();
     return _file.deleteSync();
   }
@@ -58,7 +58,7 @@ class StorageImpl {
   Future<void> remove(String key) async {
     subject
       ..value.remove(key)
-      ..change(key, null);
+      ..changeValue(key, null);
     await _writeFile(subject.value);
   }
 
@@ -70,7 +70,7 @@ class StorageImpl {
   void writeInMemory(String key, dynamic value) {
     subject
       ..value[key] = value
-      ..change(key, value);
+      ..changeValue(key, value);
   }
 
   Future<void> _writeFile(Map<String, dynamic> data) async {

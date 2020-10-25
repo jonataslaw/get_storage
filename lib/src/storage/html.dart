@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 import '../value.dart';
 
@@ -18,7 +19,7 @@ class StorageImpl {
 
     subject
       ..value.clear()
-      ..change("", null);
+      ..changeValue("", null);
   }
 
   Future<bool> _exists() async {
@@ -54,7 +55,7 @@ class StorageImpl {
   Future<void> remove(String key) {
     subject
       ..value.remove(key)
-      ..change(key, null);
+      ..changeValue(key, null);
     return _writeToStorage(subject.value);
   }
 
@@ -66,7 +67,7 @@ class StorageImpl {
   void writeInMemory(String key, dynamic value) {
     subject
       ..value[key] = value
-      ..change(key, value);
+      ..changeValue(key, value);
   }
 
   Future<void> _writeToStorage(Map<String, dynamic> data) async {
