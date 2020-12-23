@@ -1,5 +1,6 @@
-import 'dart:convert';
+import 'dart:async';
 import 'package:flutter/widgets.dart';
+import 'package:get/utils.dart';
 import 'storage/html.dart' if (dart.library.io) 'storage/io.dart';
 import 'value.dart';
 
@@ -30,6 +31,8 @@ class GetStorage {
   }
 
   static final Map<String, GetStorage> _sync = {};
+
+  final microtask = Microtask();
 
   /// Start the storage drive. Importate: use await before calling this api, or side effects will happen.
   static Future<bool> init([String container = 'GetStorage']) {
@@ -97,38 +100,33 @@ class GetStorage {
   // }
 
   /// Write data on your container
-  Future<void> write(String key, dynamic value,
-      [EncodeObject objectToEncode]) async {
-    final _encoded =
-        json.encode(objectToEncode != null ? objectToEncode(value) : value);
-    await _concrete.write(key, json.decode(_encoded));
+  Future<void> write(String key, dynamic value) async {
+    writeInMemory(key, value);
+    // final _encoded = json.encode(value);
+    // await _concrete.write(key, json.decode(_encoded));
 
     return _tryFlush();
   }
 
   void writeInMemory(String key, dynamic value) {
-    _concrete.writeInMemory(key, value);
+    _concrete.write(key, value);
   }
 
   /// Write data on your only if data is null
-  Future<void> writeIfNull(String key, dynamic value,
-      [EncodeObject objectToEncode]) async {
+  Future<void> writeIfNull(String key, dynamic value) async {
     if (read(key) != null) return;
-    final _encoded =
-        json.encode(objectToEncode != null ? objectToEncode(value) : value);
-    await _concrete.write(key, json.decode(_encoded));
-    return _tryFlush();
+    return write(key, value);
   }
 
   /// remove data from container by key
   Future<void> remove(String key) async {
-    await _concrete.remove(key);
+    _concrete.remove(key);
     return _tryFlush();
   }
 
   /// clear all data on your container
   Future<void> erase() async {
-    await _concrete.clear();
+    _concrete.clear();
     return _tryFlush();
   }
 
@@ -137,11 +135,11 @@ class GetStorage {
   }
 
   Future<void> _tryFlush() async {
-    if (_lockDatabase != null) {
-      await _lockDatabase;
-    }
-    _lockDatabase = _flush();
-    return _lockDatabase;
+    return microtask.exec(_addToQueue);
+  }
+
+  Future _addToQueue() {
+    return queue.add(_flush);
   }
 
   Future<void> _flush() async {
@@ -155,17 +153,31 @@ class GetStorage {
 
   StorageImpl _concrete;
 
+  GetQueue queue = GetQueue();
+
   /// listenable of container
   ValueStorage<Map<String, dynamic>> get listenable => _concrete.subject;
 
   /// Start the storage drive. Importate: use await before calling this api, or side effects will happen.
   Future<bool> initStorage;
 
-  Future<void> _lockDatabase;
-
   Map<String, dynamic> _initialData;
 }
 
-typedef EncodeObject = Object Function(Object);
+class Microtask {
+  int _version = 0;
+  int _microtask = 0;
+
+  void exec(Function callback) {
+    if (_microtask == _version) {
+      _microtask++;
+      scheduleMicrotask(() {
+        _version++;
+        _microtask = _version;
+        callback();
+      });
+    }
+  }
+}
 
 typedef KeyCallback = Function(String);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/state_manager.dart';
+import 'package:get/get.dart';
+
 import 'package:get_storage/get_storage.dart';
 
 void main() async {
@@ -7,25 +8,27 @@ void main() async {
   runApp(App());
 }
 
-class App extends StatelessWidget {
+class Controller extends GetxController {
   final box = GetStorage();
+  bool get isDark => box.read('darkmode') ?? false;
+  ThemeData get theme => isDark ? ThemeData.dark() : ThemeData.light();
+  void changeTheme(bool val) => box.write('darkmode', val);
+}
 
+class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // We will insert a value into the storage if it does not already have one, otherwise it will ignore it.
-    box.writeIfNull('darkmode', false);
-
+    final controller = Get.put(Controller());
     return SimpleBuilder(builder: (_) {
-      bool isDark = box.read('darkmode');
       return MaterialApp(
-        theme: isDark ? ThemeData.dark() : ThemeData.light(),
+        theme: controller.theme,
         home: Scaffold(
           appBar: AppBar(title: Text("Get Storage")),
           body: Center(
             child: SwitchListTile(
-              value: isDark,
+              value: controller.isDark,
               title: Text("Touch to change ThemeMode"),
-              onChanged: (val) => box.write('darkmode', val),
+              onChanged: controller.changeTheme,
             ),
           ),
         ),

@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_storage/src/storage_impl.dart';
 import 'package:get_storage/src/read_write_value.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'utils/list_equality.dart';
 
@@ -64,6 +67,17 @@ void main() async {
     expect(list.last, g.read('write'));
   });
 
+  test('Test backup and recover corrupted file', () async {
+    await g.write('write', 'abc');
+    expect('abc', g.read('write'));
+
+    final file = await _fileDb();
+    file.writeAsStringSync('ndj323e');
+    await GetStorage.init();
+
+    expect('abc', g.read('write'));
+  });
+
   test('Write and read using delegate', () {
     final data = 0.val('write');
     var list = new List<int>.generate(50, (i) {
@@ -123,4 +137,13 @@ void main() async {
       expect(eq(g.getValues(), [1, 'a', 3.0]), true);
     });
   });
+}
+
+Future<File> _fileDb(
+    {bool isBackup = false, String fileName = 'GetStorage'}) async {
+  final dir = await getApplicationDocumentsDirectory();
+  final _path = dir.path;
+  final _file =
+      isBackup ? File('$_path/$fileName.bak') : File('$_path/$fileName.gs');
+  return _file;
 }

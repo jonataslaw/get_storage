@@ -6,19 +6,19 @@ class ReadWriteValue<T> {
   final String key;
   final T defaultValue;
   final StorageFactory getBox;
-  final EncodeObject encoder;
+  // final EncodeObject encoder;
 
   ReadWriteValue(
     this.key,
     this.defaultValue, [
     this.getBox,
-    this.encoder,
+    //  this.encoder,
   ]);
 
   GetStorage _getRealBox() => getBox?.call() ?? GetStorage();
 
   T get val => _getRealBox().read(key) ?? defaultValue;
-  set val(T newVal) => _getRealBox().write(key, newVal, encoder);
+  set val(T newVal) => _getRealBox().write(key, newVal);
 }
 
 extension Data<T> on T {

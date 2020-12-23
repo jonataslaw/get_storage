@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:get/get_core/get_core.dart';
 import 'package:path_provider/path_provider.dart';
 import '../value.dart';
 
@@ -12,25 +14,39 @@ class StorageImpl {
   final ValueStorage<Map<String, dynamic>> subject =
       ValueStorage<Map<String, dynamic>>(<String, dynamic>{});
 
-  Future<void> clear() async {
-    File _file = await _getFile();
+  RandomAccessFile _randomAccessfile;
+
+  void clear() async {
     subject
       ..value.clear()
       ..changeValue("", null);
-    subject.value.clear();
-    return _file.deleteSync();
   }
 
-  // Future<bool> _exists() async {
-  //   File _file = await _getFile();
-  //   return _file.existsSync();
-  // }
+  Future<void> deleteBox() async {
+    final box = await _fileDb(false);
+    final backup = await _fileDb(true);
+    return Future.wait([box.delete(), backup.delete()]);
+  }
 
   Future<void> flush() async {
-    final serialized = json.encode(subject.value);
-    File _file = await _getFile();
-    await _file.writeAsString(serialized, flush: true);
-    return;
+    final buffer = utf8.encode(json.encode(subject.value));
+    final length = buffer.length;
+    RandomAccessFile _file = await _getRandomFile();
+
+    _randomAccessfile = await _file.lock();
+    _randomAccessfile = await _randomAccessfile.setPosition(0);
+    _randomAccessfile = await _randomAccessfile.writeFrom(buffer);
+    _randomAccessfile = await _randomAccessfile.truncate(length);
+    _madeBackup();
+  }
+
+  void _madeBackup() {
+    _getFile(true).then(
+      (value) => value.writeAsString(
+        json.encode(subject.value),
+        flush: true,
+      ),
+    );
   }
 
   T read<T>(String key) {
@@ -47,55 +63,78 @@ class StorageImpl {
 
   Future<void> init([Map<String, dynamic> initialData]) async {
     subject.value = initialData ?? <String, dynamic>{};
-    File _file = await _getFile();
-    if (_file.existsSync()) {
-      return _readFile();
-    } else {
-      return _writeFile(subject.value);
-    }
+
+    RandomAccessFile _file = await _getRandomFile();
+    return _file.lengthSync() == 0 ? flush() : _readFile();
   }
 
-  Future<void> remove(String key) async {
+  void remove(String key) {
     subject
       ..value.remove(key)
       ..changeValue(key, null);
-    await _writeFile(subject.value);
   }
 
-  Future<void> write(String key, dynamic value) async {
-    writeInMemory(key, value);
-    await _writeFile(subject.value);
-  }
-
-  void writeInMemory(String key, dynamic value) {
+  void write(String key, dynamic value) {
     subject
       ..value[key] = value
       ..changeValue(key, value);
   }
 
-  Future<void> _writeFile(Map<String, dynamic> data) async {
-    File _file = await _getFile();
-    _file.writeAsString(json.encode(data), flush: true);
-  }
-
   Future<void> _readFile() async {
-    File _file = await _getFile();
-    final content = await _file.readAsString()
-      ..trim();
-    subject.value =
-        json?.decode(content == "" ? "{}" : content) as Map<String, dynamic>;
+    try {
+      RandomAccessFile _file = await _getRandomFile();
+      _file = await _file.setPosition(0);
+      final buffer = new Uint8List(await _file.length());
+      await _file.readInto(buffer);
+      subject.value = json.decode(utf8.decode(buffer));
+    } catch (e) {
+      Get.log('Corrupted box, recovering backup file', isError: true);
+      final _file = await _getFile(true);
+
+      final content = await _file.readAsString()
+        ..trim();
+
+      if (content == null || content.isEmpty) {
+        subject.value = {};
+      } else {
+        try {
+          subject.value = json.decode(content) as Map<String, dynamic>;
+        } catch (e) {
+          Get.log('Can not recover Corrupted box', isError: true);
+          subject.value = {};
+        }
+      }
+      flush();
+    }
   }
 
-  Future<File> _getFile() async {
+  Future<RandomAccessFile> _getRandomFile() async {
+    if (_randomAccessfile != null) return _randomAccessfile;
+    final fileDb = await _getFile(false);
+    _randomAccessfile = await fileDb.open(mode: FileMode.append);
+
+    return _randomAccessfile;
+  }
+
+  Future<File> _getFile(bool isBackup) async {
+    final fileDb = await _fileDb(isBackup);
+    if (!fileDb.existsSync()) {
+      fileDb.createSync();
+    }
+    return fileDb;
+  }
+
+  Future<File> _fileDb(bool isBackup) async {
     final dir = await _getDocumentDir();
     final _path = path ?? dir.path;
-    final _file = File('$_path/$fileName.gs');
+    final _file =
+        isBackup ? File('$_path/$fileName.bak') : File('$_path/$fileName.gs');
     return _file;
   }
 
   Future<Directory> _getDocumentDir() async {
     try {
-      return await getApplicationDocumentsDirectory();
+      return getApplicationDocumentsDirectory();
     } catch (err) {
       throw err;
     }

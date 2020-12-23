@@ -13,7 +13,7 @@ class StorageImpl {
   ValueStorage<Map<String, dynamic>> subject =
       ValueStorage<Map<String, dynamic>>(<String, dynamic>{});
 
-  Future<void> clear() async {
+  void clear() {
     localStorage.remove(fileName);
     subject.value.clear();
 
@@ -52,23 +52,23 @@ class StorageImpl {
     return;
   }
 
-  Future<void> remove(String key) {
+  void remove(String key) {
     subject
       ..value.remove(key)
       ..changeValue(key, null);
-    return _writeToStorage(subject.value);
+    //  return _writeToStorage(subject.value);
   }
 
-  Future<void> write(String key, dynamic value) {
-    writeInMemory(key, value);
-    return _writeToStorage(subject.value);
-  }
-
-  void writeInMemory(String key, dynamic value) {
+  void write(String key, dynamic value) {
     subject
       ..value[key] = value
       ..changeValue(key, value);
+    //return _writeToStorage(subject.value);
   }
+
+  // void writeInMemory(String key, dynamic value) {
+
+  // }
 
   Future<void> _writeToStorage(Map<String, dynamic> data) async {
     localStorage.update(fileName, (val) => json.encode(subject.value),
