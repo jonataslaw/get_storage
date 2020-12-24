@@ -1,3 +1,6 @@
+## [1.4.0] 
+- Added failure recover backup
+
 ## [1.3.2] 
 - Added compatibility with Getx 3.15.0
 

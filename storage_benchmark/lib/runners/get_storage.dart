@@ -41,10 +41,8 @@ class GetStorageRunner implements BenchmarkRunner {
   Future<int> batchWriteInt(Map<String, int> entries) async {
     var s = Stopwatch()..start();
     for (var key in entries.keys) {
-      prefs.writeInMemory(key, entries[key]);
+      await prefs.write(key, entries[key]);
     }
-
-    await prefs.save();
 
     s.stop();
     return s.elapsedMilliseconds;
@@ -54,10 +52,8 @@ class GetStorageRunner implements BenchmarkRunner {
   Future<int> batchWriteString(Map<String, String> entries) async {
     var s = Stopwatch()..start();
     for (var key in entries.keys) {
-      prefs.writeInMemory(key, entries[key]);
+      await prefs.write(key, entries[key]);
     }
-
-    await prefs.save();
 
     s.stop();
     return s.elapsedMilliseconds;
@@ -67,7 +63,7 @@ class GetStorageRunner implements BenchmarkRunner {
   Future<int> batchDeleteInt(List<String> keys) async {
     var s = Stopwatch()..start();
     for (var key in keys) {
-      prefs.remove(key);
+      await prefs.remove(key);
     }
     s.stop();
     return s.elapsedMilliseconds;
