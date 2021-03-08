@@ -5,7 +5,7 @@ typedef StorageFactory = GetStorage Function();
 class ReadWriteValue<T> {
   final String key;
   final T defaultValue;
-  final StorageFactory getBox;
+  final StorageFactory? getBox;
   // final EncodeObject encoder;
 
   ReadWriteValue(
@@ -24,8 +24,8 @@ class ReadWriteValue<T> {
 extension Data<T> on T {
   ReadWriteValue<T> val(
     String valueKey, {
-    StorageFactory getBox,
-    T defVal,
+    StorageFactory? getBox,
+    T? defVal,
   }) {
     return ReadWriteValue(valueKey, defVal ?? this, getBox);
   }

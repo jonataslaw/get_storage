@@ -8,10 +8,10 @@ import 'value.dart';
 class GetStorage {
   factory GetStorage(
       [String container = 'GetStorage',
-      String path,
-      Map<String, dynamic> initialData]) {
+      String? path,
+      Map<String, dynamic>? initialData]) {
     if (_sync.containsKey(container)) {
-      return _sync[container];
+      return _sync[container]!;
     } else {
       final instance = GetStorage._internal(container, path, initialData);
       _sync[container] = instance;
@@ -20,7 +20,7 @@ class GetStorage {
   }
 
   GetStorage._internal(String key,
-      [String path, Map<String, dynamic> initialData]) {
+      [String? path, Map<String, dynamic>? initialData]) {
     _concrete = StorageImpl(key, path);
     _initialData = initialData;
 
@@ -37,9 +37,6 @@ class GetStorage {
   /// Start the storage drive. Importate: use await before calling this api, or side effects will happen.
   static Future<bool> init([String container = 'GetStorage']) {
     WidgetsFlutterBinding.ensureInitialized();
-    if (container == null) {
-      throw 'key can not be null';
-    }
     return GetStorage(container).initStorage;
   }
 
@@ -52,7 +49,7 @@ class GetStorage {
   }
 
   /// Reads a value in your container with the given key.
-  T read<T>(String key) {
+  T? read<T>(String key) {
     return _concrete.read(key);
   }
 
@@ -151,7 +148,7 @@ class GetStorage {
     return;
   }
 
-  StorageImpl _concrete;
+  late StorageImpl _concrete;
 
   GetQueue queue = GetQueue();
 
@@ -159,9 +156,9 @@ class GetStorage {
   ValueStorage<Map<String, dynamic>> get listenable => _concrete.subject;
 
   /// Start the storage drive. Importate: use await before calling this api, or side effects will happen.
-  Future<bool> initStorage;
+  late Future<bool> initStorage;
 
-  Map<String, dynamic> _initialData;
+  Map<String, dynamic>? _initialData;
 }
 
 class Microtask {
