@@ -64,9 +64,9 @@ abstract class Equality<E> {
 class DefaultEquality<E> implements Equality<E> {
   const DefaultEquality();
   @override
-  bool equals(Object e1, Object e2) => e1 == e2;
+  bool equals(Object? e1, Object? e2) => e1 == e2;
   @override
-  int hash(Object e) => e.hashCode;
+  int hash(Object? e) => e.hashCode;
   @override
   bool isValidKey(Object o) => true;
 }

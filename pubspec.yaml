@@ -1,16 +1,17 @@
 name: get_storage
 description: A fast, extra light and synchronous key-value storage written entirely in Dart
-version: 1.4.0
+version: 2.0.0
 homepage: https://github.com/jonataslaw/get_storage
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  path_provider: ">=1.6.22 <2.0.0"
-  get: ">=3.15.0 <4.0.0"
+  path_provider: ^2.0.1
+  get: ^4.0.0-nullsafety.2
+  collection: ^1.15.0-nullsafety.4
 
 dev_dependencies:
   flutter_test:
@@ -21,7 +22,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
-
   # To add assets to your package, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
@@ -32,7 +32,6 @@ flutter:
   #
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
-
   # To add custom fonts to your package, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a

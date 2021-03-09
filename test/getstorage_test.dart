@@ -11,7 +11,7 @@ import 'utils/list_equality.dart';
 void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  GetStorage g;
+  late GetStorage g;
 
   const channel = MethodChannel('plugins.flutter.io/path_provider');
   void setUpMockChannels(MethodChannel channel) {
