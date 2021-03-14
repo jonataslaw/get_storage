@@ -123,7 +123,7 @@ class StorageImpl {
   Future<File> _getFile(bool isBackup) async {
     final fileDb = await _fileDb(isBackup);
     if (!fileDb.existsSync()) {
-      fileDb.createSync();
+      fileDb.createSync(recursive: true);
     }
     return fileDb;
   }
@@ -139,9 +139,8 @@ class StorageImpl {
     try {
       final _isWindows = Platform.I.isWindows;
       if (_isWindows) {
-        // Using LocalFileSystem().currentDirectory seems to
-        // fail as well, this seems to be a fix
-        return LocalFileSystem().systemTempDirectory;
+        final _currentDir = LocalFileSystem().currentDirectory;
+        return Directory('C:\\${_currentDir.path.split('\\').last}');
       } else {
         // Using getApplicationDocumentsDirectory() fails due to
         // permission restrictions on Windows (not sure about Mac)
