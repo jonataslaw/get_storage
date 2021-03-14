@@ -40,6 +40,7 @@ class StorageImpl {
     _randomAccessfile = await _randomAccessfile!.setPosition(0);
     _randomAccessfile = await _randomAccessfile!.writeFrom(buffer);
     _randomAccessfile = await _randomAccessfile!.truncate(length);
+    _randomAccessfile = await _file.unlock();
     _madeBackup();
   }
 
