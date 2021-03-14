@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   path_provider: ^2.0.1
+  platform_info: ^3.0.0-nullsafety.1
   get: ^4.0.0-nullsafety.2
   collection: ^1.15.0-nullsafety.4
 
