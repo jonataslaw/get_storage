@@ -128,11 +128,8 @@ class StorageImpl {
 
   Future<File> _fileDb(bool isBackup) async {
     final dir = await _getDocumentDir();
-    final _isWindows = Platform.I.operatingSystem.toString() == 'Windows';
-    final _path = path ?? dir.path;
-    final _file = _isWindows ??
-      isBackup ? File('$_path\\$fileName.bak') : File('$_path\\$fileName.gs') :
-      isBackup ? File('$_path/$fileName.bak') : File('$_path/$fileName.gs');
+    final _path = await _getPath(isBackup, path ?? dir.path);
+    final _file = File(_path);
     return _file;
   }
 
@@ -142,5 +139,11 @@ class StorageImpl {
     } catch (err) {
       throw err;
     }
+  }
+  
+  Future<String> _getPath(bool isBackup, String? path) async {
+    final _isWindows = Platform.I.operatingSystem.toString() == 'Windows';
+    final _separator = _isWindows ?? '\\' : '/';
+    return isBackup ? '$_path$_separator$fileName.bak' : '$_path$_separator$fileName.gs';
   }
 }
