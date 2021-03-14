@@ -145,8 +145,9 @@ class StorageImpl {
         // the C: drive. In fact, this could fail on devices where
         // the main drive is a different letter. However, this will
         // hold on most PCs running Windows, so it's a feasible fix.
-        final _currentDir = LocalFileSystem().currentDirectory;
-        return Directory('C:\\${_currentDir.path.split('\\').last}');
+        // final _currentDir = LocalFileSystem().currentDirectory;
+        // return Directory('C:\\${_currentDir.path.split('\\').last}');
+        return getApplicationDocumentsDirectory();
       } else {
         // Using getApplicationDocumentsDirectory() fails due to
         // permission restrictions on Windows (not sure about Mac)
