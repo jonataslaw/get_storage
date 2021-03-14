@@ -9,7 +9,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  file: ^6.1.0
   get: ^4.0.0-nullsafety.2
   path_provider: ^2.0.1
   platform_info: ^3.0.0-nullsafety.1
