@@ -136,10 +136,11 @@ class StorageImpl {
 
   Future<Directory> _getImplicitDir() async {
     try {
-      
       final _isWindows = Platform.I.isWindows;
       if (_isWindows) {
-        return LocalFileSystem().currentDirectory;
+        // Using LocalFileSystem().currentDirectory seems to
+        // fail as well, this seems to be a fix
+        return LocalFileSystem().systemTempDirectory;
       } else {
         // Using getApplicationDocumentsDirectory() fails due to
         // permission restrictions on Windows (not sure about Mac)
