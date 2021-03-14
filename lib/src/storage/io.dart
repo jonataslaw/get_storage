@@ -139,6 +139,12 @@ class StorageImpl {
     try {
       final _isWindows = Platform.I.isWindows;
       if (_isWindows) {
+        // This seems to work on my end, and is only a temporary
+        // fix until someone can find out how to create files
+        // in directories that are not created in the root of
+        // the C: drive. In fact, this could fail on devices where
+        // the main drive is a different letter. However, this will
+        // hold on most PCs running Windows, so it's a feasible fix.
         final _currentDir = LocalFileSystem().currentDirectory;
         return Directory('C:\\${_currentDir.path.split('\\').last}');
       } else {
