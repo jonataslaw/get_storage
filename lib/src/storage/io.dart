@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:file/local.dart';
 import 'package:get/get_core/get_core.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:platform_info/platform_info.dart';
@@ -127,15 +128,23 @@ class StorageImpl {
   }
 
   Future<File> _fileDb(bool isBackup) async {
-    final dir = await _getDocumentDir();
+    final dir = await _getImplicitDir();
     final _path = await _getPath(isBackup, path ?? dir.path);
     final _file = File(_path);
     return _file;
   }
 
-  Future<Directory> _getDocumentDir() async {
+  Future<Directory> _getImplicitDir() async {
     try {
-      return getApplicationDocumentsDirectory();
+      
+      final _isWindows = Platform.I.isWindows;
+      if (_isWindows) {
+        return LocalFileSystem().currentDirectory;
+      } else {
+        // Using getApplicationDocumentsDirectory() fails due to
+        // permission restrictions on Windows (not sure about Mac)
+        return getApplicationDocumentsDirectory();
+      }
     } catch (err) {
       throw err;
     }
