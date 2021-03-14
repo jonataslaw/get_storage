@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:get/get_core/get_core.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:platform_info/platform_info.dart';
 import '../value.dart';
 
 class StorageImpl {
@@ -127,9 +128,11 @@ class StorageImpl {
 
   Future<File> _fileDb(bool isBackup) async {
     final dir = await _getDocumentDir();
+    final _isWindows = Platform.I.operatingSystem.toString() == 'Windows';
     final _path = path ?? dir.path;
-    final _file =
-        isBackup ? File('$_path/$fileName.bak') : File('$_path/$fileName.gs');
+    final _file = _isWindows ??
+      isBackup ? File('$_path\\$fileName.bak') : File('$_path\\$fileName.gs') :
+      isBackup ? File('$_path/$fileName.bak') : File('$_path/$fileName.gs');
     return _file;
   }
 
