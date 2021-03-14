@@ -144,6 +144,6 @@ class StorageImpl {
   Future<String> _getPath(bool isBackup, String? path) async {
     final _isWindows = Platform.I.operatingSystem.toString() == 'Windows';
     final _separator = _isWindows ?? '\\' : '/';
-    return isBackup ? '$_path$_separator$fileName.bak' : '$_path$_separator$fileName.gs';
+    return isBackup ? '$path$_separator$fileName.bak' : '$path$_separator$fileName.gs';
   }
 }
