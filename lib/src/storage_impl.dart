@@ -34,7 +34,7 @@ class GetStorage {
 
   final microtask = Microtask();
 
-  /// Start the storage drive. Importate: use await before calling this api, or side effects will happen.
+  /// Start the storage drive. It's important to use await before calling this API, or side effects will occur.
   static Future<bool> init([String container = 'GetStorage']) {
     WidgetsFlutterBinding.ensureInitialized();
     return GetStorage(container).initStorage;

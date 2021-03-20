@@ -37,7 +37,7 @@ packages:
     source: hosted
     version: "1.1.0"
   collection:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: collection
       url: "https://pub.dartlang.org"
@@ -144,6 +144,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.0"
+  platform_info:
+    dependency: "direct main"
+    description:
+      name: platform_info
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.0-nullsafety.1"
   plugin_platform_interface:
     dependency: transitive
     description:

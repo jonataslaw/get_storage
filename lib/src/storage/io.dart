@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:get/get_core/get_core.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:platform_info/platform_info.dart';
 import '../value.dart';
 
 class StorageImpl {
@@ -38,6 +39,7 @@ class StorageImpl {
     _randomAccessfile = await _randomAccessfile!.setPosition(0);
     _randomAccessfile = await _randomAccessfile!.writeFrom(buffer);
     _randomAccessfile = await _randomAccessfile!.truncate(length);
+    _randomAccessfile = await _file.unlock();
     _madeBackup();
   }
 
@@ -120,24 +122,29 @@ class StorageImpl {
   Future<File> _getFile(bool isBackup) async {
     final fileDb = await _fileDb(isBackup);
     if (!fileDb.existsSync()) {
-      fileDb.createSync();
+      fileDb.createSync(recursive: true);
     }
     return fileDb;
   }
 
   Future<File> _fileDb(bool isBackup) async {
-    final dir = await _getDocumentDir();
-    final _path = path ?? dir.path;
-    final _file =
-        isBackup ? File('$_path/$fileName.bak') : File('$_path/$fileName.gs');
+    final dir = await _getImplicitDir();
+    final _path = await _getPath(isBackup, path ?? dir.path);
+    final _file = File(_path);
     return _file;
   }
 
-  Future<Directory> _getDocumentDir() async {
+  Future<Directory> _getImplicitDir() async {
     try {
       return getApplicationDocumentsDirectory();
     } catch (err) {
       throw err;
     }
+  }
+  
+  Future<String> _getPath(bool isBackup, String? path) async {
+    final _isWindows = Platform.I.isWindows;
+    final _separator = _isWindows ? '\\' : '/';
+    return isBackup ? '$path$_separator$fileName.bak' : '$path$_separator$fileName.gs';
   }
 }
