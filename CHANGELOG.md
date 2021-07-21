@@ -1,3 +1,12 @@
+## [2.0.3] 
+- update to lastest getx
+
+## [2.0.2] 
+- update dependencies
+
+## [2.0.0] 
+- Null-safety support (@Ascenio) and fixes #49, #53 and #54 (@SquishyOctopus)
+
 ## [1.4.0] 
 - Added failure recover backup
 

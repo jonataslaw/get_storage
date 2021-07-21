@@ -75,8 +75,8 @@ class GetStorage {
 
   Map<Function, Function> _keyListeners = <Function, Function>{};
 
-  VoidCallback listenKey(String key, Function(dynamic) callback) {
-    final listen = () {
+  VoidCallback listenKey(String key, ValueSetter callback) {
+    final VoidCallback listen = () {
       if (changes.keys.first == key) {
         callback(changes[key]);
       }

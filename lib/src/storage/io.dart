@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:get/get.dart';
 import 'package:get/get_core/get_core.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:platform_info/platform_info.dart';
 import '../value.dart';
 
 class StorageImpl {
@@ -141,10 +141,12 @@ class StorageImpl {
       throw err;
     }
   }
-  
+
   Future<String> _getPath(bool isBackup, String? path) async {
-    final _isWindows = Platform.I.isWindows;
+    final _isWindows = GetPlatform.isWindows;
     final _separator = _isWindows ? '\\' : '/';
-    return isBackup ? '$path$_separator$fileName.bak' : '$path$_separator$fileName.gs';
+    return isBackup
+        ? '$path$_separator$fileName.bak'
+        : '$path$_separator$fileName.gs';
   }
 }

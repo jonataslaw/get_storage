@@ -3,7 +3,6 @@ import 'dart:convert';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 import '../value.dart';
-import 'package:collection/collection.dart' show IterableExtension;
 
 class StorageImpl {
   StorageImpl(this.fileName, [this.path]);
@@ -88,5 +87,14 @@ class StorageImpl {
     } else {
       await _writeToStorage(<String, dynamic>{});
     }
+  }
+}
+
+extension FirstWhereExt<T> on Iterable<T> {
+  T? firstWhereOrNull(bool Function(T element) test) {
+    for (var element in this) {
+      if (test(element)) return element;
+    }
+    return null;
   }
 }

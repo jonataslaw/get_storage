@@ -35,9 +35,10 @@ void main() async {
   test('write, read listen, e removeListen', () async {
     String valueListen = "";
     g.write('test', 'a');
+    g.write('test2', 'a');
 
-    final removeListen = g.listen(() {
-      valueListen = g.read('test');
+    final removeListen = g.listenKey('test', (val) {
+      valueListen = val;
     });
 
     expect('a', g.read('test'));

@@ -8,7 +8,7 @@ class ListEquality<E> implements Equality<List<E>> {
   @override
   bool equals(List<E> list1, List<E> list2) {
     if (identical(list1, list2)) return true;
-    if (list1 == null || list2 == null) return false;
+
     var length = list1.length;
     if (length != list2.length) return false;
     for (var i = 0; i < length; i++) {
@@ -19,7 +19,6 @@ class ListEquality<E> implements Equality<List<E>> {
 
   @override
   int hash(List<E> list) {
-    if (list == null) return null.hashCode;
     // Jenkins's one-at-a-time hash function.
     // This code is almost identical to the one in IterableEquality, except
     // that it uses indexing instead of iterating to get the elements.
