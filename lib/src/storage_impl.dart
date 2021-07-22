@@ -155,7 +155,7 @@ class GetStorage {
   /// listenable of container
   ValueStorage<Map<String, dynamic>> get listenable => _concrete.subject;
 
-  /// Start the storage drive. Importate: use await before calling this api, or side effects will happen.
+  /// Start the storage drive. Important: use await before calling this api, or side effects will happen.
   late Future<bool> initStorage;
 
   Map<String, dynamic>? _initialData;
