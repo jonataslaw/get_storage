@@ -21,6 +21,7 @@ void main() async {
         if (methodCall?.method == 'getApplicationDocumentsDirectory') {
           return '.';
         }
+        return null;
       },
     );
   }

@@ -1,19 +1,20 @@
 name: get_storage
 description: A fast, extra light and synchronous key-value storage written entirely in Dart
-version: 2.0.3
+version: 2.0.4
 homepage: https://github.com/jonataslaw/get_storage
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.16.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  get: ">=4.0.0 <5.0.0"
-  path_provider: ^2.0.1
+  get: ">=4.6.0 <6.0.0"
+  path_provider: ^2.0.9
   #platform_info: ^3.0.0-nullsafety.1
 
 dev_dependencies:
+  flutter_lints: ^1.0.4
   flutter_test:
     sdk: flutter
 
