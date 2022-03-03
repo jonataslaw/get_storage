@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:get/get.dart';
-import 'package:get/get_core/get_core.dart';
 import 'package:path_provider/path_provider.dart';
 import '../value.dart';
 
@@ -101,7 +100,7 @@ class StorageImpl {
         subject.value = {};
       } else {
         try {
-          subject.value = json.decode(content) as Map<String, dynamic>?;
+          subject.value = (json.decode(content) as Map<String, dynamic>?) ?? {};
         } catch (e) {
           Get.log('Can not recover Corrupted box', isError: true);
           subject.value = {};
