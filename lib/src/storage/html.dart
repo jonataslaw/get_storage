@@ -81,7 +81,7 @@ class StorageImpl {
       },
     );
     if (dataFromLocal != null) {
-      subject.value = json.decode(dataFromLocal.value) as Map<String, dynamic>?;
+      subject.value = json.decode(dataFromLocal.value) as Map<String, dynamic>;
     } else {
       await _writeToStorage(<String, dynamic>{});
     }
