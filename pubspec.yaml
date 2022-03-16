@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  get: ^5.0.0-beta.43
+  get: ^5.0.0-beta.50
   path_provider: ^2.0.1
   #platform_info: ^3.0.0-nullsafety.1
 
