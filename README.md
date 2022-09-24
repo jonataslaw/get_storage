@@ -58,13 +58,14 @@ box.remove('quote');
 
 #### To listen changes you can use `listen`:
 ```dart
-box.listen((){
+Function? disposeListen;
+disposeListen = box.listen((){
   print('box changed');
 });
 ```
 #### If you subscribe to events, be sure to dispose them when using:
 ```dart
-box.removeListen(listen);
+disposeListen?.call();
 ```
 #### To listen changes on key you can use `listenKey`:
 
