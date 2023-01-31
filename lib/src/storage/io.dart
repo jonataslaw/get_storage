@@ -101,7 +101,7 @@ class StorageImpl {
         subject.value = {};
       } else {
         try {
-          subject.value = json.decode(content) as Map<String, dynamic>?;
+          subject.value = json.decode(content) as Map<String, dynamic>;
         } catch (e) {
           Get.log('Can not recover Corrupted box', isError: true);
           subject.value = {};
