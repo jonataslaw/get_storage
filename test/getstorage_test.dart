@@ -15,7 +15,8 @@ void main() async {
 
   const channel = MethodChannel('plugins.flutter.io/path_provider');
   void setUpMockChannels(MethodChannel channel) {
-    TestDefaultBinaryMessengerBinding.instance?.defaultBinaryMessenger.setMockMethodCallHandler(
+    TestDefaultBinaryMessengerBinding.instance?.defaultBinaryMessenger
+        .setMockMethodCallHandler(
       channel,
       (MethodCall? methodCall) async {
         if (methodCall?.method == 'getApplicationDocumentsDirectory') {
@@ -122,7 +123,8 @@ void main() async {
   });
 
   group('get keys/values', () {
-    Function(Iterable, List) eq = (i, l) => const ListEquality().equals(i.toList(), l);
+    Function(Iterable, List) eq =
+        (i, l) => const ListEquality().equals(i.toList(), l);
 
     test('should return their stored dynamic values', () {
       expect(eq(g.getKeys().toList(), []), true);
@@ -143,9 +145,11 @@ void main() async {
   });
 }
 
-Future<File> _fileDb({bool isBackup = false, String fileName = 'GetStorage'}) async {
+Future<File> _fileDb(
+    {bool isBackup = false, String fileName = 'GetStorage'}) async {
   final dir = await getApplicationDocumentsDirectory();
   final _path = dir.path;
-  final _file = isBackup ? File('$_path/$fileName.bak') : File('$_path/$fileName.gs');
+  final _file =
+      isBackup ? File('$_path/$fileName.bak') : File('$_path/$fileName.gs');
   return _file;
 }

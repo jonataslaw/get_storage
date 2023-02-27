@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
+
 import '../value.dart';
 
 class StorageImpl {
@@ -12,7 +14,8 @@ class StorageImpl {
   final String? path;
   final String fileName;
 
-  final ValueStorage<Map<String, dynamic>> subject = ValueStorage<Map<String, dynamic>>(<String, dynamic>{});
+  final ValueStorage<Map<String, dynamic>> subject =
+      ValueStorage<Map<String, dynamic>>(<String, dynamic>{});
 
   RandomAccessFile? _randomAccessfile;
 
@@ -23,8 +26,8 @@ class StorageImpl {
   }
 
   Future<void> deleteBox() async {
-    final box = await _fileDb(false);
-    final backup = await _fileDb(true);
+    final box = await _fileDb(isBackup: false);
+    final backup = await _fileDb(isBackup: true);
     await Future.wait([box.delete(), backup.delete()]);
   }
 
@@ -118,14 +121,14 @@ class StorageImpl {
   }
 
   Future<File> _getFile(bool isBackup) async {
-    final fileDb = await _fileDb(isBackup);
+    final fileDb = await _fileDb(isBackup: isBackup);
     if (!fileDb.existsSync()) {
       fileDb.createSync(recursive: true);
     }
     return fileDb;
   }
 
-  Future<File> _fileDb(bool isBackup) async {
+  Future<File> _fileDb({required bool isBackup}) async {
     final dir = await _getImplicitDir();
     final _path = await _getPath(isBackup, path ?? dir.path);
     final _file = File(_path);
@@ -143,6 +146,8 @@ class StorageImpl {
   Future<String> _getPath(bool isBackup, String? path) async {
     final _isWindows = GetPlatform.isWindows;
     final _separator = _isWindows ? '\\' : '/';
-    return isBackup ? '$path$_separator$fileName.bak' : '$path$_separator$fileName.gs';
+    return isBackup
+        ? '$path$_separator$fileName.bak'
+        : '$path$_separator$fileName.gs';
   }
 }

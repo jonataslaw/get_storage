@@ -1,3 +1,6 @@
+## [2.1.0] 
+- Add support to Getx5
+
 ## [2.0.3] 
 - update to lastest getx
 

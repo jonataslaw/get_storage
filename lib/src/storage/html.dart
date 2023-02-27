@@ -11,7 +11,8 @@ class StorageImpl {
   final String? path;
   final String fileName;
 
-  ValueStorage<Map<String, dynamic>> subject = ValueStorage<Map<String, dynamic>>(<String, dynamic>{});
+  ValueStorage<Map<String, dynamic>> subject =
+      ValueStorage<Map<String, dynamic>>(<String, dynamic>{});
 
   void clear() {
     localStorage.remove(fileName);
@@ -71,7 +72,8 @@ class StorageImpl {
   // }
 
   Future<void> _writeToStorage(Map<String, dynamic> data) async {
-    localStorage.update(fileName, (val) => json.encode(subject.value), ifAbsent: () => json.encode(subject.value));
+    localStorage.update(fileName, (val) => json.encode(subject.value),
+        ifAbsent: () => json.encode(subject.value));
   }
 
   Future<void> _readFromStorage() async {
