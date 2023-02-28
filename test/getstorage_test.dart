@@ -12,7 +12,9 @@ void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late GetStorage g;
-
+  
+  // After updating flutter to 2.10, use the line below if you use macos
+  // const channel = MethodChannel('plugins.flutter.io/path_provider_macos');
   const channel = MethodChannel('plugins.flutter.io/path_provider');
   void setUpMockChannels(MethodChannel channel) {
     TestDefaultBinaryMessengerBinding.instance?.defaultBinaryMessenger
