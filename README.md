@@ -17,7 +17,7 @@ You can install packages from the command line:
 with `Flutter`:
 
 ```css
-$  flutter packages get
+$  flutter packages get_storage
 ```
 
 ### Import it
