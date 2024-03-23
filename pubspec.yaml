@@ -11,6 +11,7 @@ dependencies:
     sdk: flutter
   get: ">=4.0.0 <6.0.0"
   path_provider: ^2.0.1
+  web: any
   #platform_info: ^3.0.0-nullsafety.1
 
 dev_dependencies:
