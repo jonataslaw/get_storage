@@ -4,7 +4,7 @@ version: 2.1.0
 homepage: https://github.com/jonataslaw/get_storage
 
 environment:
-  sdk: ">=2.16.0 <3.0.0"
+  sdk: '>=3.2.5 <4.0.0'
 
 dependencies:
   flutter:

@@ -21,7 +21,7 @@ class StorageImpl {
 
   void clear() async {
     subject
-      ..value.clear()
+      ..value?.clear()
       ..changeValue("", null);
   }
 
@@ -54,15 +54,15 @@ class StorageImpl {
   }
 
   T? read<T>(String key) {
-    return subject.value[key] as T?;
+    return subject.value?[key] as T?;
   }
 
   T getKeys<T>() {
-    return subject.value.keys as T;
+    return subject.value?.keys as T;
   }
 
   T getValues<T>() {
-    return subject.value.values as T;
+    return subject.value?.values as T;
   }
 
   Future<void> init([Map<String, dynamic>? initialData]) async {
@@ -74,13 +74,13 @@ class StorageImpl {
 
   void remove(String key) {
     subject
-      ..value.remove(key)
+      ..value?.remove(key)
       ..changeValue(key, null);
   }
 
   void write(String key, dynamic value) {
     subject
-      ..value[key] = value
+      ..value?[key] = value
       ..changeValue(key, value);
   }
 
@@ -129,8 +129,8 @@ class StorageImpl {
   }
 
   Future<File> _fileDb({required bool isBackup}) async {
-    final dir = await _getImplicitDir();
-    final _path = await _getPath(isBackup, path ?? dir.path);
+    final pathStr = path ?? (await _getImplicitDir()).path;
+    final _path = await _getPath(isBackup, pathStr);
     final _file = File(_path);
     return _file;
   }
