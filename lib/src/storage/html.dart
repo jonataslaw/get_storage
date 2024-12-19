@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 // ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
+// import 'dart:html' as html;
+import 'package:web/web.dart' as html;
 import '../value.dart';
 
 class StorageImpl {
@@ -15,7 +16,7 @@ class StorageImpl {
       ValueStorage<Map<String, dynamic>>(<String, dynamic>{});
 
   void clear() {
-    localStorage.remove(fileName);
+    localStorage.removeItem(fileName);
     subject.value.clear();
 
     subject
@@ -24,7 +25,7 @@ class StorageImpl {
   }
 
   Future<bool> _exists() async {
-    return localStorage.containsKey(fileName);
+    return localStorage[fileName] != null;
   }
 
   Future<void> flush() {
@@ -72,19 +73,32 @@ class StorageImpl {
   // }
 
   Future<void> _writeToStorage(Map<String, dynamic> data) async {
-    localStorage.update(fileName, (val) => json.encode(subject.value),
-        ifAbsent: () => json.encode(subject.value));
+    localStorage[fileName] = json.encode(subject.value);
   }
 
   Future<void> _readFromStorage() async {
-    final dataFromLocal = localStorage.entries.firstWhereOrNull(
-      (value) {
-        return value.key == fileName;
-      },
-    );
-    if (dataFromLocal != null) {
-      subject.value = json.decode(dataFromLocal.value) as Map<String, dynamic>;
-    } else {
+    // Iterate over localStorage to find the key you want
+    for (int i = 0; i < html.window.localStorage.length; i++) {
+      final key = html.window.localStorage.key(i);
+
+      // If key is null, handle it accordingly (e.g., log a warning)
+      if (key == null) {
+        print("Warning: localStorage key at index $i is null.");
+        continue; // Skip this iteration, or you could break if needed
+      }
+
+      // Now key is non-null, safely compare with fileName
+      if (key == fileName) {
+        final value = html.window.localStorage[key];
+        if (value != null) {
+          subject.value = json.decode(value) as Map<String, dynamic>;
+        }
+        break;
+      }
+    }
+
+    // If no value found or subject is empty, write default data
+    if (subject.value.isEmpty) {
       await _writeToStorage(<String, dynamic>{});
     }
   }

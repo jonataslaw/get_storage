@@ -1,4 +1,4 @@
-import 'package:get_storage/src/storage_impl.dart';
+import 'package:get_storage_plus/get_storage_plus.dart';
 
 typedef StorageFactory = GetStorage Function();
 

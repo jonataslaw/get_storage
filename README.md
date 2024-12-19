@@ -8,7 +8,7 @@ Can store String, int, double, Map and List
 ### Add to your pubspec:
 ```
 dependencies:
-  get_storage:
+  get_storage_plus:
 ```
 ### Install it
 
@@ -25,7 +25,7 @@ $  flutter packages get
 Now in your `Dart` code, you can use: 
 
 ````dart
-import 'package:get_storage/get_storage.dart';
+import 'package:get_storage_plus/get_storage_plus.dart';
 ````
 
 ### Initialize storage driver with await:
