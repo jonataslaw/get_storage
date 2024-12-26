@@ -119,23 +119,6 @@ void updateAge() {
   final realAge = age.val; // will read from box
 }
 ```
-
-
-## Benchmark Result:
-**GetStorage is not fast, it is absurdly fast for being memory-based. All of his operations are instantaneous. A backup of each operation is placed in a Container on the disk. Each container has its own file.**
-
-![](delete.png)
-![](write.png)
-![](read.png)
-
-## What GetStorage is:
-Persistent key/value storage for Android, iOS, Web, Linux, Mac and Fuchsia and Windows, that combines fast memory access with persistent storage.
-## What GetStorage is NOT:
-A database. Get is super compact to offer you a solution ultra-light, high-speed read/write storage to work synchronously. If you want to store data persistently on disk with immediate memory access, use it, if you want a database, with indexing and specific disk storage tools, there are incredible solutions that are already available, like Hive and Sqflite/Moor.
-
-
-As soon as you declare "write" the file is immediately written in memory and can now be accessed immediately with `box.read()`. You can also wait for the callback that it was written to disk using `await box.write()`.
-
 ## When to use GetStorage:
   - simple Maps storage.
   - cache of http requests
