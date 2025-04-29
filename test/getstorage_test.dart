@@ -15,16 +15,13 @@ void main() async {
 
   const channel = MethodChannel('plugins.flutter.io/path_provider');
   void setUpMockChannels(MethodChannel channel) {
-    TestDefaultBinaryMessengerBinding.instance?.defaultBinaryMessenger
-        .setMockMethodCallHandler(
-      channel,
-      (MethodCall? methodCall) async {
-        if (methodCall?.method == 'getApplicationDocumentsDirectory') {
-          return '.';
-        }
-        return null;
-      },
-    );
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall? methodCall) async {
+          if (methodCall?.method == 'getApplicationDocumentsDirectory') {
+            return '.';
+          }
+          return null;
+        });
   }
 
   setUpAll(() async {
@@ -64,7 +61,7 @@ void main() async {
   });
 
   test('Write and read', () {
-    var list = new List<int>.generate(50, (i) {
+    var list = List<int>.generate(50, (i) {
       int count = i + 1;
       g.write('write', count);
       return count;
@@ -86,7 +83,7 @@ void main() async {
 
   test('Write and read using delegate', () {
     final data = 0.val('write');
-    var list = new List<int>.generate(50, (i) {
+    var list = List<int>.generate(50, (i) {
       int count = i + 1;
       data.val = count;
       return count;
@@ -98,7 +95,7 @@ void main() async {
   test('Write, read, remove and exists', () {
     expect(null, g.read('write'));
 
-    var list = new List<int>.generate(50, (i) {
+    var list = List<int>.generate(50, (i) {
       int count = i + 1;
       g.write('write', count);
       return count;
@@ -123,8 +120,7 @@ void main() async {
   });
 
   group('get keys/values', () {
-    Function(Iterable, List) eq =
-        (i, l) => const ListEquality().equals(i.toList(), l);
+    eq(i, l) => const ListEquality().equals(i.toList(), l);
 
     test('should return their stored dynamic values', () {
       expect(eq(g.getKeys().toList(), []), true);
@@ -145,11 +141,13 @@ void main() async {
   });
 }
 
-Future<File> _fileDb(
-    {bool isBackup = false, String fileName = 'GetStorage'}) async {
+Future<File> _fileDb({
+  bool isBackup = false,
+  String fileName = 'GetStorage',
+}) async {
   final dir = await getApplicationDocumentsDirectory();
-  final _path = dir.path;
-  final _file =
-      isBackup ? File('$_path/$fileName.bak') : File('$_path/$fileName.gs');
-  return _file;
+  final path = dir.path;
+  final file =
+      isBackup ? File('$path/$fileName.bak') : File('$path/$fileName.gs');
+  return file;
 }

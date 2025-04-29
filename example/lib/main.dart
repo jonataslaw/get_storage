@@ -16,23 +16,27 @@ class Controller extends GetxController {
 }
 
 class App extends StatelessWidget {
+  const App({super.key});
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(Controller());
-    return Observer(builder: (_) {
-      return MaterialApp(
-        theme: controller.theme,
-        home: Scaffold(
-          appBar: AppBar(title: Text("Get Storage")),
-          body: Center(
-            child: SwitchListTile(
-              value: controller.isDark,
-              title: Text("Touch to change ThemeMode"),
-              onChanged: controller.changeTheme,
+    return Observer(
+      builder: (_) {
+        return MaterialApp(
+          theme: controller.theme,
+          home: Scaffold(
+            appBar: AppBar(title: Text("Get Storage")),
+            body: Center(
+              child: SwitchListTile(
+                value: controller.isDark,
+                title: Text("Touch to change ThemeMode"),
+                onChanged: controller.changeTheme,
+              ),
             ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 }

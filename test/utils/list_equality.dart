@@ -1,9 +1,9 @@
-const int _HASH_MASK = 0x7fffffff;
+const int _hashMask = 0x7fffffff;
 
 class ListEquality<E> implements Equality<List<E>> {
   final Equality<E> _elementEquality;
   const ListEquality([Equality<E> elementEquality = const DefaultEquality()])
-      : _elementEquality = elementEquality;
+    : _elementEquality = elementEquality;
 
   @override
   bool equals(List<E> list1, List<E> list2) {
@@ -25,13 +25,13 @@ class ListEquality<E> implements Equality<List<E>> {
     var hash = 0;
     for (var i = 0; i < list.length; i++) {
       var c = _elementEquality.hash(list[i]);
-      hash = (hash + c) & _HASH_MASK;
-      hash = (hash + (hash << 10)) & _HASH_MASK;
+      hash = (hash + c) & _hashMask;
+      hash = (hash + (hash << 10)) & _hashMask;
       hash ^= (hash >> 6);
     }
-    hash = (hash + (hash << 3)) & _HASH_MASK;
+    hash = (hash + (hash << 3)) & _hashMask;
     hash ^= (hash >> 11);
-    hash = (hash + (hash << 15)) & _HASH_MASK;
+    hash = (hash + (hash << 15)) & _hashMask;
     return hash;
   }
 

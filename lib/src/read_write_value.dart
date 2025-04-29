@@ -22,11 +22,7 @@ class ReadWriteValue<T> {
 }
 
 extension Data<T> on T {
-  ReadWriteValue<T> val(
-    String valueKey, {
-    StorageFactory? getBox,
-    T? defVal,
-  }) {
+  ReadWriteValue<T> val(String valueKey, {StorageFactory? getBox, T? defVal}) {
     return ReadWriteValue(valueKey, defVal ?? this, getBox);
   }
 }

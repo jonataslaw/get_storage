@@ -14,8 +14,7 @@ class StorageImpl {
   final String? path;
   final String fileName;
 
-  final ValueStorage<Map<String, dynamic>> subject =
-      ValueStorage<Map<String, dynamic>>(<String, dynamic>{});
+  final subject = ValueStorage<Map<String, dynamic>>(<String, dynamic>{});
 
   RandomAccessFile? _randomAccessfile;
 
@@ -34,22 +33,19 @@ class StorageImpl {
   Future<void> flush() async {
     final buffer = utf8.encode(json.encode(subject.value));
     final length = buffer.length;
-    RandomAccessFile _file = await _getRandomFile();
+    final file = await _getRandomFile();
 
-    _randomAccessfile = await _file.lock();
+    _randomAccessfile = await file.lock();
     _randomAccessfile = await _randomAccessfile!.setPosition(0);
     _randomAccessfile = await _randomAccessfile!.writeFrom(buffer);
     _randomAccessfile = await _randomAccessfile!.truncate(length);
-    _randomAccessfile = await _file.unlock();
+    _randomAccessfile = await file.unlock();
     _madeBackup();
   }
 
   void _madeBackup() {
     _getFile(true).then(
-      (value) => value.writeAsString(
-        json.encode(subject.value),
-        flush: true,
-      ),
+      (value) => value.writeAsString(json.encode(subject.value), flush: true),
     );
   }
 
@@ -68,8 +64,8 @@ class StorageImpl {
   Future<void> init([Map<String, dynamic>? initialData]) async {
     subject.value = initialData ?? <String, dynamic>{};
 
-    RandomAccessFile _file = await _getRandomFile();
-    return _file.lengthSync() == 0 ? flush() : _readFile();
+    final file = await _getRandomFile();
+    return file.lengthSync() == 0 ? flush() : _readFile();
   }
 
   void remove(String key) {
@@ -86,17 +82,18 @@ class StorageImpl {
 
   Future<void> _readFile() async {
     try {
-      RandomAccessFile _file = await _getRandomFile();
-      _file = await _file.setPosition(0);
-      final buffer = new Uint8List(await _file.length());
-      await _file.readInto(buffer);
+      RandomAccessFile file = await _getRandomFile();
+      file = await file.setPosition(0);
+      final buffer = Uint8List(await file.length());
+      await file.readInto(buffer);
       subject.value = json.decode(utf8.decode(buffer));
     } catch (e) {
       Get.log('Corrupted box, recovering backup file', isError: true);
-      final _file = await _getFile(true);
+      final file = await _getFile(true);
 
-      final content = await _file.readAsString()
-        ..trim();
+      final content =
+          await file.readAsString()
+            ..trim();
 
       if (content.isEmpty) {
         subject.value = {};
@@ -130,24 +127,24 @@ class StorageImpl {
 
   Future<File> _fileDb({required bool isBackup}) async {
     final dir = await _getImplicitDir();
-    final _path = await _getPath(isBackup, path ?? dir.path);
-    final _file = File(_path);
-    return _file;
+    final filePath = await _getPath(isBackup, path ?? dir.path);
+    final file = File(filePath);
+    return file;
   }
 
   Future<Directory> _getImplicitDir() async {
     try {
       return getApplicationDocumentsDirectory();
     } catch (err) {
-      throw err;
+      rethrow;
     }
   }
 
   Future<String> _getPath(bool isBackup, String? path) async {
-    final _isWindows = GetPlatform.isWindows;
-    final _separator = _isWindows ? '\\' : '/';
+    final isWindows = GetPlatform.isWindows;
+    final separator = isWindows ? '\\' : '/';
     return isBackup
-        ? '$path$_separator$fileName.bak'
-        : '$path$_separator$fileName.gs';
+        ? '$path$separator$fileName.bak'
+        : '$path$separator$fileName.gs';
   }
 }

@@ -3,15 +3,16 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:get/utils.dart';
 
-import 'storage/html.dart' if (dart.library.io) 'storage/io.dart';
+import 'storage/web.dart' if (dart.library.io) 'storage/io.dart';
 import 'value.dart';
 
 /// Instantiate GetStorage to access storage driver apis
 class GetStorage {
-  factory GetStorage(
-      [String container = 'GetStorage',
-      String? path,
-      Map<String, dynamic>? initialData]) {
+  factory GetStorage([
+    String container = 'GetStorage',
+    String? path,
+    Map<String, dynamic>? initialData,
+  ]) {
     if (_sync.containsKey(container)) {
       return _sync[container]!;
     } else {
@@ -21,8 +22,11 @@ class GetStorage {
     }
   }
 
-  GetStorage._internal(String key,
-      [String? path, Map<String, dynamic>? initialData]) {
+  GetStorage._internal(
+    String key, [
+    String? path,
+    Map<String, dynamic>? initialData,
+  ]) {
     _concrete = StorageImpl(key, path);
     _initialData = initialData;
 
@@ -46,7 +50,7 @@ class GetStorage {
     try {
       await _concrete.init(_initialData);
     } catch (err) {
-      throw err;
+      rethrow;
     }
   }
 
@@ -75,14 +79,14 @@ class GetStorage {
     return _concrete.subject.addListener(value);
   }
 
-  Map<Function, Function> _keyListeners = <Function, Function>{};
+  final Map<Function, Function> _keyListeners = {};
 
   VoidCallback listenKey(String key, ValueSetter callback) {
-    final VoidCallback listen = () {
+    void listen() {
       if (changes.keys.first == key) {
         callback(changes[key]);
       }
-    };
+    }
 
     _keyListeners[callback] = listen;
     return _concrete.subject.addListener(listen);
@@ -150,9 +154,9 @@ class GetStorage {
     return;
   }
 
-  late StorageImpl _concrete;
+  late final StorageImpl _concrete;
 
-  GetQueue queue = GetQueue();
+  final queue = GetQueue();
 
   /// listenable of container
   ValueStorage<Map<String, dynamic>> get listenable => _concrete.subject;
