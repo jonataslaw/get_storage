@@ -118,3 +118,6 @@ storage_benchmark/android/gradlew
 
 # storage files during local tests
 **/*.gs
+
+# FVM Version Cache
+.fvm/
