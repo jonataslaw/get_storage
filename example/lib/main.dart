@@ -19,7 +19,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(Controller());
-    return Observer(builder: (_) {
+    return Obx(() {
       return MaterialApp(
         theme: controller.theme,
         home: Scaffold(
