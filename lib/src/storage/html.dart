@@ -1,6 +1,5 @@
-// ignore_for_file: avoid_web_libraries_in_flutter, deprecated_member_use
+import 'package:web/web.dart' as web;
 
-import 'dart:html' as html;
 import '../value.dart';
 import 'storage_backend.dart';
 import 'storage_codec.dart';
@@ -8,7 +7,7 @@ import 'storage_codec.dart';
 final class StorageImpl implements StorageBackend {
   StorageImpl(this.fileName, [this.path]);
 
-  html.Storage get localStorage => html.window.localStorage;
+  web.Storage get localStorage => web.window.localStorage;
 
   final String? path;
   final String fileName;
@@ -19,7 +18,7 @@ final class StorageImpl implements StorageBackend {
 
   @override
   void clear() {
-    localStorage.remove(fileName);
+    localStorage.removeItem(fileName);
     subject.value.clear();
 
     subject
@@ -29,7 +28,7 @@ final class StorageImpl implements StorageBackend {
 
   @override
   Future<void> deleteBox() async {
-    localStorage.remove(fileName);
+    localStorage.removeItem(fileName);
   }
 
   @override
@@ -56,7 +55,7 @@ final class StorageImpl implements StorageBackend {
   @override
   Future<void> init([Map<String, dynamic>? initialData]) async {
     subject.value = initialData ?? <String, dynamic>{};
-    final source = localStorage[fileName];
+    final source = localStorage.getItem(fileName);
     if (source == null) {
       await _writeToStorage(subject.value);
     } else {
@@ -79,7 +78,7 @@ final class StorageImpl implements StorageBackend {
   }
 
   Future<void> _writeToStorage(Map<String, dynamic> data) async {
-    localStorage[fileName] = _codec.encode(data);
+    localStorage.setItem(fileName, _codec.encode(data));
   }
 
   void _readFromStorage(String source) {

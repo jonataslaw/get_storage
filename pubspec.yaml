@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  web: ^1.1.1
   path: ^1.9.1
   path_provider: ^2.1.5
 
