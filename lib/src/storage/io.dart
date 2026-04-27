@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 import 'dart:io';
 
+import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 import '../value.dart';
@@ -62,7 +63,11 @@ final class StorageImpl implements StorageBackend {
     subject.value = initialData ?? <String, dynamic>{};
 
     final file = await _getFile(false);
-    return await file.length() == 0 ? flush() : _readFile();
+    if (!await file.exists() || await file.length() == 0) {
+      return flush();
+    }
+
+    return _readFile();
   }
 
   @override
@@ -96,26 +101,30 @@ final class StorageImpl implements StorageBackend {
 
   Future<File> _getFile(bool isBackup) async {
     final fileDb = await _fileDb(isBackup: isBackup);
-    if (!await fileDb.exists()) {
-      await fileDb.create(recursive: true);
-    }
+    await fileDb.parent.create(recursive: true);
     return fileDb;
   }
 
   Future<File> _fileDb({required bool isBackup}) async {
     final dir = await _getImplicitDir();
-    final _path = await _getPath(isBackup, path ?? dir.path);
-    final _file = File(_path);
-    return _file;
+    final basePath = _resolveBasePath(path, dir.path);
+    return File(_getPath(isBackup, basePath));
   }
 
   Future<Directory> _getImplicitDir() async {
     return getApplicationDocumentsDirectory();
   }
 
-  Future<String> _getPath(bool isBackup, String path) async {
-    final separator = Platform.pathSeparator;
-    return isBackup ? '$path$separator$fileName.bak' : '$path$separator$fileName.gs';
+  String _resolveBasePath(String? customPath, String defaultPath) {
+    if (customPath == null || customPath.isEmpty) {
+      return defaultPath;
+    }
+
+    return p.isAbsolute(customPath) ? customPath : p.join(defaultPath, customPath);
+  }
+
+  String _getPath(bool isBackup, String path) {
+    return p.join(path, isBackup ? '$fileName.bak' : '$fileName.gs');
   }
 
   Future<void> _recoverFromBackup() async {
@@ -137,9 +146,35 @@ final class StorageImpl implements StorageBackend {
   }
 
   Future<void> _writeAtomically(File file, String contents) async {
+    await file.parent.create(recursive: true);
+
     final temporaryFile = File('${file.path}.tmp');
-    await temporaryFile.writeAsString(contents, flush: true);
-    await temporaryFile.rename(file.path);
+    try {
+      await temporaryFile.writeAsString(contents, flush: true);
+      try {
+        await _renameTemporaryFile(temporaryFile, file);
+      } on FileSystemException {
+        await _writeDirectly(file, contents);
+      }
+    } finally {
+      if (await temporaryFile.exists()) {
+        await temporaryFile.delete();
+      }
+    }
+  }
+
+  Future<void> _renameTemporaryFile(File temporaryFile, File file) async {
+    try {
+      await temporaryFile.rename(file.path);
+    } on FileSystemException {
+      await file.parent.create(recursive: true);
+      await temporaryFile.rename(file.path);
+    }
+  }
+
+  Future<void> _writeDirectly(File file, String contents) async {
+    await file.parent.create(recursive: true);
+    await file.writeAsString(contents, flush: true);
   }
 
   Future<void> _deleteIfExists(File file) async {

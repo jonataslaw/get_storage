@@ -2,8 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get_storage/src/storage_impl.dart';
-import 'package:get_storage/src/read_write_value.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'utils/list_equality.dart';
@@ -15,8 +14,7 @@ void main() async {
 
   const channel = MethodChannel('plugins.flutter.io/path_provider');
   void setUpMockChannels(MethodChannel channel) {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
       channel,
       (MethodCall? methodCall) async {
         if (methodCall?.method == 'getApplicationDocumentsDirectory') {
@@ -94,6 +92,47 @@ void main() async {
     expect(await backup.readAsString(), contains('"write":"abc"'));
   });
 
+  test('write supports nested container paths', () async {
+    final objectRoot = Directory('objects');
+    addTearDown(() async {
+      if (await objectRoot.exists()) {
+        await objectRoot.delete(recursive: true);
+      }
+    });
+
+    const container = 'objects/4/0';
+    await GetStorage.init(container);
+    final box = GetStorage(container);
+    await box.erase();
+
+    await box.write('notification', {'id': 1});
+
+    final value = box.read<dynamic>('notification') as Map<dynamic, dynamic>;
+    expect(value['id'], 1);
+    expect(await _fileDb(fileName: container).then((file) => file.exists()), true);
+  });
+
+  test('write supports nested custom storage paths', () async {
+    final objectRoot = Directory('objects');
+    addTearDown(() async {
+      if (await objectRoot.exists()) {
+        await objectRoot.delete(recursive: true);
+      }
+    });
+
+    const container = 'notifications';
+    const storagePath = 'objects/4/0';
+    final box = GetStorage(container, storagePath);
+    await box.initStorage;
+    await box.erase();
+
+    await box.write('notification', {'id': 1});
+
+    final value = box.read<dynamic>('notification') as Map<dynamic, dynamic>;
+    expect(value['id'], 1);
+    expect(await File('$storagePath/$container.gs').exists(), true);
+  });
+
   test('Write and read using delegate', () {
     final data = 0.val('write');
     var list = new List<int>.generate(50, (i) {
@@ -133,8 +172,7 @@ void main() async {
   });
 
   group('get keys/values', () {
-    bool Function(Iterable<dynamic>, List<dynamic>) eq =
-        (i, l) => const ListEquality<dynamic>().equals(i.toList(), l);
+    bool Function(Iterable<dynamic>, List<dynamic>) eq = (i, l) => const ListEquality<dynamic>().equals(i.toList(), l);
 
     test('should return their stored dynamic values', () {
       expect(eq(g.getKeys().toList(), []), true);
@@ -155,11 +193,9 @@ void main() async {
   });
 }
 
-Future<File> _fileDb(
-    {bool isBackup = false, String fileName = 'GetStorage'}) async {
+Future<File> _fileDb({bool isBackup = false, String fileName = 'GetStorage'}) async {
   final dir = await getApplicationDocumentsDirectory();
   final _path = dir.path;
-  final _file =
-      isBackup ? File('$_path/$fileName.bak') : File('$_path/$fileName.gs');
+  final _file = isBackup ? File('$_path/$fileName.bak') : File('$_path/$fileName.gs');
   return _file;
 }
