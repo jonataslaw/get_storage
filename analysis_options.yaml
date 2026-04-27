@@ -1,0 +1,17 @@
+analyzer:
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+
+linter:
+  rules:
+    - always_declare_return_types
+    - avoid_empty_else
+    - avoid_returning_null_for_void
+    - avoid_unused_constructor_parameters
+    - no_duplicate_case_values
+    - prefer_final_fields
+    - unnecessary_lambdas
+    - unnecessary_null_checks
+    - unrelated_type_equality_checks
