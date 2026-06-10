@@ -95,8 +95,12 @@ class StorageImpl {
       Get.log('Corrupted box, recovering backup file', isError: true);
       final _file = await _getFile(true);
 
-      final content = await _file.readAsString()
-        ..trim();
+      String content = '';
+      try {
+        content = (await _file.readAsString()).trim();
+      } catch (e) {
+        Get.log('Can not recover Corrupted box', isError: true);
+      }
 
       if (content.isEmpty) {
         subject.value = {};
