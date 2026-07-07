@@ -12,7 +12,9 @@ dependencies:
   web: ^1.1.1
   path: ^1.9.1
   path_provider: ^2.1.5
+  ffi: ^2.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  test: ^1.30.0
