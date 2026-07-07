@@ -1,30 +1,31 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
-import 'package:get/utils.dart';
 
+import 'storage/flush_scheduler.dart';
 import 'storage/html.dart' if (dart.library.io) 'storage/io.dart';
+import 'storage/storage_backend.dart';
 import 'value.dart';
 
 /// Instantiate GetStorage to access storage driver apis
-class GetStorage {
-  factory GetStorage(
-      [String container = 'GetStorage',
-      String? path,
-      Map<String, dynamic>? initialData]) {
-    if (_sync.containsKey(container)) {
-      return _sync[container]!;
-    } else {
-      final instance = GetStorage._internal(container, path, initialData);
-      _sync[container] = instance;
-      return instance;
-    }
+final class GetStorage {
+  factory GetStorage([
+    String container = 'GetStorage',
+    String? path,
+    Map<String, dynamic>? initialData,
+  ]) {
+    return _sync.putIfAbsent(
+      container,
+      () => GetStorage._internal(container, path, initialData),
+    );
   }
 
-  GetStorage._internal(String key,
-      [String? path, Map<String, dynamic>? initialData]) {
+  GetStorage._internal(
+    String key, [
+    String? path,
+    Map<String, dynamic>? initialData,
+  ]) : _initialData = initialData {
     _concrete = StorageImpl(key, path);
-    _initialData = initialData;
 
     initStorage = Future<bool>(() async {
       await _init();
@@ -34,7 +35,7 @@ class GetStorage {
 
   static final Map<String, GetStorage> _sync = {};
 
-  final microtask = Microtask();
+  final FlushScheduler _flushScheduler = FlushScheduler();
 
   /// Start the storage drive. It's important to use await before calling this API, or side effects will occur.
   static Future<bool> init([String container = 'GetStorage']) {
@@ -43,11 +44,7 @@ class GetStorage {
   }
 
   Future<void> _init() async {
-    try {
-      await _concrete.init(_initialData);
-    } catch (err) {
-      throw err;
-    }
+    await _concrete.init(_initialData);
   }
 
   /// Reads a value in your container with the given key.
@@ -55,17 +52,17 @@ class GetStorage {
     return _concrete.read(key);
   }
 
-  T getKeys<T>() {
+  Iterable<String> getKeys() {
     return _concrete.getKeys();
   }
 
-  T getValues<T>() {
+  Iterable<dynamic> getValues() {
     return _concrete.getValues();
   }
 
   /// return data true if value is different of null;
   bool hasData(String key) {
-    return (read(key) == null ? false : true);
+    return read<dynamic>(key) != null;
   }
 
   Map<String, dynamic> get changes => _concrete.subject.changes;
@@ -75,12 +72,13 @@ class GetStorage {
     return _concrete.subject.addListener(value);
   }
 
-  Map<Function, Function> _keyListeners = <Function, Function>{};
+  final Map<Function, VoidCallback> _keyListeners = <Function, VoidCallback>{};
 
-  VoidCallback listenKey(String key, ValueSetter callback) {
+  VoidCallback listenKey(String key, ValueSetter<dynamic> callback) {
     final VoidCallback listen = () {
-      if (changes.keys.first == key) {
-        callback(changes[key]);
+      final change = _concrete.subject.change;
+      if (change case (key: final changedKey, value: final value) when changedKey == key) {
+        callback(value);
       }
     };
 
@@ -99,11 +97,8 @@ class GetStorage {
   // }
 
   /// Write data on your container
-  Future<void> write(String key, dynamic value) async {
+  Future<void> write(String key, dynamic value) {
     writeInMemory(key, value);
-    // final _encoded = json.encode(value);
-    // await _concrete.write(key, json.decode(_encoded));
-
     return _tryFlush();
   }
 
@@ -112,8 +107,8 @@ class GetStorage {
   }
 
   /// Write data on your only if data is null
-  Future<void> writeIfNull(String key, dynamic value) async {
-    if (read(key) != null) return;
+  Future<void> writeIfNull(String key, dynamic value) {
+    if (read<dynamic>(key) != null) return Future<void>.value();
     return write(key, value);
   }
 
@@ -134,11 +129,7 @@ class GetStorage {
   }
 
   Future<void> _tryFlush() async {
-    return microtask.exec(_addToQueue);
-  }
-
-  Future _addToQueue() {
-    return queue.add(_flush);
+    return _flushScheduler.schedule(_flush);
   }
 
   Future<void> _flush() async {
@@ -150,24 +141,23 @@ class GetStorage {
     return;
   }
 
-  late StorageImpl _concrete;
-
-  GetQueue queue = GetQueue();
+  late final StorageBackend _concrete;
 
   /// listenable of container
   ValueStorage<Map<String, dynamic>> get listenable => _concrete.subject;
 
   /// Start the storage drive. Important: use await before calling this api, or side effects will happen.
-  late Future<bool> initStorage;
+  late final Future<bool> initStorage;
 
-  Map<String, dynamic>? _initialData;
+  final Map<String, dynamic>? _initialData;
 }
 
-class Microtask {
+@Deprecated('Use FlushScheduler instead. This compatibility type will be removed in a future release.')
+final class Microtask {
   int _version = 0;
   int _microtask = 0;
 
-  void exec(Function callback) {
+  void exec(void Function() callback) {
     if (_microtask == _version) {
       _microtask++;
       scheduleMicrotask(() {
@@ -179,4 +169,4 @@ class Microtask {
   }
 }
 
-typedef KeyCallback = Function(String);
+typedef KeyCallback = void Function(String key);

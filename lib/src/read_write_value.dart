@@ -12,12 +12,13 @@ class ReadWriteValue<T> {
     this.key,
     this.defaultValue, [
     this.getBox,
-    //  this.encoder,
+    // this.encoder,
   ]);
 
   GetStorage _getRealBox() => getBox?.call() ?? GetStorage();
 
   T get val => _getRealBox().read(key) ?? defaultValue;
+
   set val(T newVal) => _getRealBox().write(key, newVal);
 }
 
