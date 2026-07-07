@@ -1,3 +1,15 @@
+## [4.0.0]
+- Breaking: raise the minimum Flutter SDK constraint to `>=3.10.0`.
+- Migrate the web storage backend from `dart:html` to `package:web`, dropping the deprecated `avoid_web_libraries_in_flutter` workaround.
+- Frame persisted payloads with an Adler-32 checksum and length header so a truncated or bit-rotted box file is detected on read instead of being silently loaded; legacy unframed boxes keep loading unchanged.
+- Write the backup file before the primary file on flush and best-effort `fsync` the containing directory (via FFI on Linux/Android/macOS/iOS) so rename metadata survives power loss.
+- Cache resolved box/backup `File` handles and skip re-encoding and re-writing when nothing changed since the last successful flush.
+- Use unique per-write temporary file names (pid + counter) so overlapping writers can no longer clobber a shared `.tmp` file, with a direct-write fallback when cross-filesystem renames fail.
+- Support nested container paths (e.g. `objects/4/0`) and resolve custom storage paths with the `path` package instead of manual string concatenation.
+- Add the `ffi` dependency for directory fsync support and a `test` dev dependency.
+- Add `test/storage_frame_test.dart` covering frame/deframe round-tripping, legacy compatibility, and corruption detection.
+- Add a read/write throughput performance benchmark (`test/get_storage_benchmark_test.dart`).
+
 ## [3.0.0]
 - Breaking: raise the minimum SDK constraint to Dart 3 (`>=3.0.0 <4.0.0`).
 - Breaking: modernize `getKeys()` and `getValues()` to return typed iterable APIs instead of generic casts.
