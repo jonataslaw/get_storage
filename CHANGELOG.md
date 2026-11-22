@@ -1,3 +1,10 @@
+## [2.2.0]
+- Migrate web storage from `dart:html` to `package:web` for WebAssembly (`dart2wasm`) compatibility
+- Raise minimum Dart SDK constraint to `>=3.3.0 <4.0.0`
+
+## [2.1.1]
+- Fix null exception in previous getx versions
+
 ## [2.1.0] 
 - Add support to Getx5
 
