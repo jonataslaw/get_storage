@@ -111,7 +111,7 @@ class GetStorage {
     _concrete.write(key, value);
   }
 
-  /// Write data on your only if data is null
+  /// Write data on your container only if data is null
   Future<void> writeIfNull(String key, dynamic value) async {
     if (read(key) != null) return;
     return write(key, value);
